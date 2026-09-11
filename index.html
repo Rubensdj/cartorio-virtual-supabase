@@ -1,794 +1,1211 @@
-1|1|<!DOCTYPE html>
-2|2|<html lang="pt-BR">
-3|3|<head>
-4|4|<meta charset="UTF-8">
-5|5|<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-6|6|<title>Sistema do Casal</title>
-7|7|<link rel="preconnect" href="https://fonts.googleapis.com">
-8|8|<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-9|9|<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-10|10|<style>
-11|:root{
-12|  --bg:#f6f7f9; --card:#ffffff; --ink:#1c1f23; --muted:#6b7280;
-13|  --accent:#7c2d3a; --accent-2:#a8445a; --accent-soft:#f4eaec;
-14|  --ok:#1f8a5b; --no:#c0392b; --line:#e6e8eb; --line-strong:#d4d7dc;
-15|  --shadow:0 1px 2px rgba(16,24,40,.06), 0 4px 16px rgba(16,24,40,.06);
-16|  --shadow-sm:0 1px 2px rgba(16,24,40,.06);
-17|  --radius:14px;
-18|  --accent-grad:linear-gradient(135deg,#7c2d3a,#a8445a);
-19|  --soft-grad:linear-gradient(180deg,#fff,#fafbfc);
-20|  --font:"Inter","Poppins",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-21|}
-22|*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-23|html,body{height:100%;}
-24|body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden;font-feature-settings:"cv02","cv03","cv04","cv11";}
-25|.btn-top, .bottom-nav, .card, .prop-card, .kpi .c, .contador .c, .msg-casal, .box-termos, .proposta{ backdrop-filter:none; -webkit-backdrop-filter:none; }
-26|.card, .prop-card, .kpi .c, .contador .c, .msg-casal, .box-termos, .proposta{ background:var(--card); }
-27|.btn-top{background:var(--card);border-bottom:1px solid var(--line);padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:var(--shadow-sm);}
-28|.btn-top .logo{font-weight:700;font-size:1rem;color:var(--ink);letter-spacing:-.01em;}
-29|.btn-top .logo span{color:var(--accent);}
-30|.btn-top button{background:transparent;border:1px solid var(--line);color:var(--muted);padding:.4rem .85rem;border-radius:10px;font-size:.85rem;cursor:pointer;font-weight:600;transition:.15s;display:flex;align-items:center;justify-content:center;}
-31|.btn-top button:hover{background:#f3f4f6;color:var(--ink);border-color:var(--line-strong);}
-32|.btn-top button svg{width:18px;height:18px;}
-33|/* === avatares === */
-34|.avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.05rem;flex-shrink:0;box-shadow:var(--shadow-sm);border:2px solid #fff;}
-35|.avatar-lg{width:96px;height:96px;font-size:2.2rem;}
-36|.avatar-xl{width:120px;height:120px;font-size:2.8rem;}
-37|.btn-top .icons{display:flex;gap:.4rem;align-items:center;}
-38|.btn-top .icons button{width:38px;height:38px;padding:0;border-radius:10px;}
-39|.post{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:0;margin-bottom:1rem;box-shadow:var(--shadow);overflow:hidden;}
-40|.post-head{display:flex;align-items:center;gap:.7rem;padding:.9rem 1rem;}
-41|.post-head .nm{font-weight:700;font-size:.95rem;color:var(--ink);}
-42|.post-head .sub{font-size:.72rem;color:var(--muted);}
-43|.post-body{padding:0 1rem 1rem;font-size:.95rem;line-height:1.55;color:var(--ink);}
-44|.post-actions{display:flex;gap:1.2rem;padding:.6rem 1rem;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem;}
-45|.post-actions span{cursor:pointer;display:flex;align-items:center;gap:.35rem;}
-46|.post-actions span svg{width:16px;height:16px;opacity:.7;}
-47|.banner{height:120px;background:var(--accent-grad);border-radius:0 0 18px 18px;margin:-1.5rem -1.1rem 0;position:relative;overflow:hidden;}
-48|.banner::after{content:"";position:absolute;inset:0;background:radial-gradient(300px 120px at 80% 0%, rgba(255,255,255,.18), transparent);}
-49|.profile-head{display:flex;flex-direction:column;align-items:center;margin-top:-44px;position:relative;z-index:2;}
-50|.profile-head .avatar-xl{border:4px solid #fff;box-shadow:var(--shadow);}
-51|.profile-head .edit-foto{margin-top:.6rem;font-size:.78rem;color:var(--accent);font-weight:600;background:var(--card);border:1px solid var(--line);padding:.35rem .85rem;border-radius:10px;cursor:pointer;}
-52|.profile-name{font-size:1.4rem;font-weight:800;color:var(--ink);margin-top:.55rem;text-align:center;letter-spacing:-.02em;}
-53|.profile-handle{font-size:.85rem;color:var(--muted);text-align:center;}
-54|.wrap{max-width:480px;margin:0 auto;padding:1.5rem 1.1rem 5.5rem;}
-55|.hero{text-align:center;padding:3rem 1.2rem 2rem;background:var(--soft-grad);border-radius:0 0 18px 18px;margin:-1.5rem -1.1rem 1.5rem;position:relative;overflow:hidden;border-bottom:1px solid var(--line);}
-56|.hero .ring{width:84px;height:84px;border-radius:24px;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;margin:0 auto 1.1rem;box-shadow:var(--shadow);}
-57|.hero h1{font-size:1.7rem;font-weight:800;color:var(--ink);letter-spacing:-.02em;}
-58|.hero p{color:var(--muted);margin-top:.6rem;font-size:.98rem;line-height:1.55;max-width:340px;margin-left:auto;margin-right:auto;}
-59|.section-title{font-size:.72rem;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);margin:1.7rem 0 .9rem;font-weight:800;display:flex;align-items:center;gap:.5rem;}
-60|.section-title::before{content:"";width:18px;height:2px;border-radius:2px;background:var(--accent);}
-61|.card{background:var(--card);border-radius:var(--radius);padding:1.3rem;margin-bottom:1rem;box-shadow:var(--shadow);border:1px solid var(--line);transition:border-color .18s, box-shadow .18s;}
-62|.card:hover{border-color:var(--line-strong);}
-63|.card h3{font-size:1.05rem;margin-bottom:.45rem;color:var(--ink);font-weight:800;letter-spacing:-.01em;}
-64|.card p{color:var(--muted);font-size:.9rem;line-height:1.55;}
-65|.btn{width:100%;padding:1rem;border:none;border-radius:var(--radius);font-size:1rem;font-weight:700;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;gap:.55rem;transition:filter .15s, transform .12s, background .15s;box-shadow:var(--shadow);background:var(--accent);}
-66|.btn:hover{filter:brightness(1.06);}
-67|.btn:active{transform:scale(.98);}
-68|.btn-google{background:var(--accent);box-shadow:var(--shadow);}
-69|.btn-github{background:var(--accent);box-shadow:var(--shadow);}
-70|.btn-guest{background:var(--accent);}
-71|.btn-outline{background:#fff;color:var(--accent);border:1.5px solid var(--accent);box-shadow:none;font-weight:700;}
-72|.btn-outline:hover{background:var(--accent-soft);}
-73|.btn-ghost{background:#fff;color:var(--muted);border:1px solid var(--line);box-shadow:none;font-weight:700;}
-74|.btn-ghost:hover{background:#f3f4f6;color:var(--ink);}
-75|.btn-sm{padding:.72rem;font-size:.9rem;border-radius:11px;}
-76|.row{display:flex;gap:.6rem;}
-77|.row>*{flex:1;}
-78|.msg{padding:.75rem 1rem;border-radius:11px;margin-bottom:1rem;font-size:.88rem;display:none;font-weight:600;}
-79|.msg.erro{background:#fdecea;color:var(--no);border:1px solid #f6cfca;}
-80|.msg.ok{background:#e7f7ec;color:var(--ok);border:1px solid #bce8c8;}
-81|.divider{display:flex;align-items:center;gap:.8rem;color:var(--muted);font-size:.84rem;margin:1.1rem 0;font-weight:600;}
-82|.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line);}
-83|.steps{display:flex;justify-content:space-between;margin:1.5rem 0;gap:.5rem;}
-84|.step{flex:1;text-align:center;font-size:.7rem;color:var(--muted);font-weight:600;}
-85|.step .n{width:32px;height:32px;border-radius:50%;background:var(--line);color:var(--ink);display:flex;align-items:center;justify-content:center;margin:0 auto .4rem;font-weight:800;transition:.2s;}
-86|.step.ativo .n{background:var(--accent);color:#fff;box-shadow:var(--shadow);}
-87|.step.feito .n{background:var(--ok);color:#fff;}
-88|.box-termos{max-height:42vh;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:1.2rem;font-size:.84rem;line-height:1.65;color:#4b5563;margin-bottom:1rem;}
-89|.box-termos h4{font-size:.92rem;margin:.9rem 0 .35rem;color:var(--accent);font-weight:800;}
-90|.box-termos h4:first-child{margin-top:0;}
-91|.check{display:flex;align-items:flex-start;gap:.6rem;font-size:.88rem;margin-bottom:.6rem;color:var(--ink);}
-92|.check input{width:auto;margin-top:.2rem;transform:scale(1.3);accent-color:var(--accent);}
-93|.pill{display:inline-block;background:var(--accent);color:#fff;padding:.3rem .8rem;border-radius:10px;font-size:.82rem;margin:.15rem;font-weight:600;}
-94|.proposta{border:1px solid var(--line);border-radius:var(--radius);padding:1rem;margin-bottom:.8rem;background:#fff;}
-95|.proposta .nome{font-weight:700;}
-96|.proposta .txt{color:var(--muted);font-style:italic;margin:.4rem 0;font-size:.88rem;}
-97|.badge{display:inline-block;padding:.25rem .7rem;border-radius:10px;font-size:.74rem;font-weight:600;}
-98|.badge.pend{background:#fef3cd;color:#856404;}
-99|.hero-casal{text-align:center;padding:2rem 1rem;background:var(--soft-grad);border-radius:0 0 18px 18px;margin:-1.5rem -1.1rem 1.5rem;border-bottom:1px solid var(--line);}
-100|.hero-casal h2{font-size:1.4rem;color:var(--ink);font-weight:800;letter-spacing:-.01em;}
-101|.hero-casal p{color:var(--muted);margin-top:.4rem;}
-102|.hidden{display:none!important;}
-103|.casal-avatar{width:100px;height:100px;border-radius:50%;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:var(--shadow);position:relative;}
-104|.casal-nome{font-size:1.55rem;font-weight:800;color:var(--ink);text-align:center;letter-spacing:-.02em;}
-105|.casal-sub{text-align:center;color:var(--muted);font-size:.92rem;margin-top:.35rem;}
-106|.ring-dias{position:relative;width:150px;height:150px;margin:1.2rem auto .4rem;}
-107|.ring-dias-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-108|.ring-dias-num span{font-size:2.4rem;font-weight:800;color:var(--accent);line-height:1;}
-109|.ring-dias-num small{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:.2rem;}
-110|.hero-casal{text-align:center;padding:2.6rem 1.2rem 2rem;background:var(--soft-grad);border-radius:0 0 18px 18px;margin:-1.5rem -1.1rem 1.5rem;position:relative;overflow:hidden;border-bottom:1px solid var(--line);}
-111|.contador{display:flex;gap:.7rem;justify-content:center;margin:1.5rem 0 1.1rem;}
-112|.contador .c{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:.9rem .6rem;text-align:center;flex:1;max-width:140px;box-shadow:var(--shadow);}
-113|.contador .c .n{font-size:1.7rem;font-weight:800;color:var(--accent);line-height:1;}
-114|.contador .c .l{font-size:.62rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-top:.35rem;line-height:1.3;}
-115|.linha-vinculo{display:flex;align-items:center;justify-content:center;gap:.9rem;margin:1.1rem 0;}
-116|.linha-vinculo .p{width:58px;height:58px;border-radius:50%;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:1.3rem;box-shadow:var(--shadow);}
-117|.msg-casal{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:1.1rem 1.1rem 1.1rem;font-size:.94rem;line-height:1.6;color:#4b5563;text-align:center;font-style:italic;position:relative;}
-118|.duplo{display:flex;gap:.6rem;}
-119|.duplo>*{flex:1;}
-120|.prop-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.05rem;margin-bottom:.75rem;box-shadow:var(--shadow);transition:border-color .18s;}
-121|.prop-card:hover{border-color:var(--line-strong);}
-122|.prop-card .quem{display:flex;align-items:center;gap:.65rem;}
-123|.prop-card .av{width:42px;height:42px;border-radius:50%;background:var(--accent-grad);display:flex;align-items:center;justify-content:center;font-size:1.05rem;color:#fff;font-weight:700;}
-124|.prop-card .nm{font-weight:800;color:var(--ink);font-size:.98rem;}
-125|.prop-card .tx{color:var(--muted);font-style:italic;font-size:.88rem;margin:.55rem 0 .75rem;line-height:1.45;}
-126|.vazio{text-align:center;color:var(--muted);font-size:.9rem;padding:1.8rem 1rem;}
-127|.selo{display:inline-flex;align-items:center;gap:.35rem;background:var(--ok);color:#fff;font-size:.74rem;font-weight:800;padding:.35rem .8rem;border-radius:10px;margin-top:.7rem;box-shadow:var(--shadow-sm);}
-128|.fade{animation:fade .45s ease both;}
-129|@keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
-130|.screen.ativo .card, .screen.ativo .prop-card, .screen.ativo .kpi .c{animation:fade .45s ease both;}
-131|.screen.ativo .card:nth-child(2){animation-delay:.06s;}
-132|.screen.ativo .card:nth-child(3){animation-delay:.12s;}
-133|.screen{display:none;}
-134|.screen.ativo{display:block;animation:fade .35s ease both;}
-135|.bottom-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;z-index:30;padding:.4rem 0 calc(.4rem + env(safe-area-inset-bottom));box-shadow:0 -1px 0 var(--line), 0 -6px 24px rgba(16,24,40,.06);}
-136|.bottom-nav button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:.18rem;padding:.35rem 0;cursor:pointer;color:var(--muted);font-size:.66rem;font-weight:700;transition:color .15s;}
-137|.bottom-nav button .ic{width:22px;height:22px;line-height:1;transition:transform .2s;display:flex;align-items:center;justify-content:center;}
-138|.bottom-nav button .ic svg{width:21px;height:21px;}
-139|.bottom-nav button.ativo{color:var(--accent);}
-140|.bottom-nav button.ativo .ic{transform:scale(1.1) translateY(-1px);}
-141|.bottom-nav button.ativo::after{content:"";width:22px;height:3px;border-radius:3px;background:var(--accent);margin-top:.12rem;}
-142|.wrap-nav{max-width:480px;margin:0 auto;padding:1.5rem 1.1rem 5.5rem;}
-143|.card-block{margin-bottom:1rem;}
-144|.kpi{display:flex;gap:.7rem;margin:1.1rem 0;}
-145|.kpi .c{flex:1;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:.95rem .6rem;text-align:center;box-shadow:var(--shadow);}
-146|.kpi .c .n{font-size:1.5rem;font-weight:800;color:var(--accent);line-height:1;}
-147|.kpi .c .l{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:.35rem;}
-148|.list-row{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0;border-bottom:1px solid var(--line);}
-149|.list-row:last-child{border-bottom:none;}
-150|.list-row .k{color:var(--muted);font-size:.85rem;}
-151|.list-row .v{font-weight:800;color:var(--ink);font-size:.9rem;text-align:right;}
-152|.badge-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:.4rem;}
-153|.badge-dot.ok{background:var(--ok);}
-154|.badge-dot.no{background:var(--no);}
-155|input[type=text],input[type=email],input[type=password],input[type=file]{font-family:var(--font);}
-156|input[type=text],input[type=email],input[type=password]{width:100%;padding:.85rem 1rem;border:1px solid var(--line);border-radius:11px;font-size:.95rem;background:#fff;color:var(--ink);transition:border-color .15s, box-shadow .15s;}
-157|input[type=text]:focus,input[type=email]:focus,input[type=password]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
-158|</style>
-159|168|</head>
-160|169|<body>
-161|170|171|
-162|172|<div class="btn-top" id="topbar" style="display:none">
-163|173|  <div class="logo">Sistema do <span>Casal</span></div>
-164|174|  <div class="icons">
-165|175|    <button onclick="navTo('inicio')" title="Início"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg></button>
-166|176|    <button onclick="navTo('perfil')" title="Perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></button>
-167|177|    <button onclick="sair()" title="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9"/><path d="M6.4 7a8 8 0 1 0 11.2 0"/></svg></button>
-168|178|  </div>
-169|179|</div>
-170|180|
-171|181|<div class="wrap">
-172|182|
-173|183|  <!-- LANDING -->
-174|184|  <div id="view-landing">
-175|185|    <div class="hero">
-176|186|      <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3.2"/><path d="M12 5V3M12 21v-2M5 12H3M21 12h-2"/></svg></div>
-177|187|      <h1>Sistema do Casal</h1>
-178|188|      <p>Uma plataforma para firmar o vínculo entre duas pessoas: aceite os termos, conecte-se e registre seu compromisso — simples, rápido e sem burocracia.</p>
-179|189|    </div>
-180|190|
-181|191|    <div class="section-title">Comece agora</div>
-182|192|    <div class="card">
-183|193|      <div class="tabs" style="display:flex;gap:.5rem;margin-bottom:1rem;">
-184|194|        <button class="btn btn-sm btn-outline tab-ativo" id="tabLogin" onclick="trocaTab('login')" style="flex:1">Entrar</button>
-185|195|        <button class="btn btn-sm btn-ghost" id="tabReg" onclick="trocaTab('reg')" style="flex:1">Criar conta</button>
-186|196|      </div>
-187|197|      <div id="campoNome" class="hidden" style="margin-bottom:.7rem;">
-188|198|        <label style="font-size:.82rem;color:var(--muted);font-weight:600;">Nome de usuário</label>
-189|199|        <input id="authNome" type="text" placeholder="Como devemos te chamar?" style="width:100%;padding:.8rem 1rem;border:1px solid var(--line);border-radius:12px;margin-top:.3rem;font-size:.95rem;font-family:inherit;">
-190|200|      </div>
-191|201|      <label style="font-size:.82rem;color:var(--muted);font-weight:600;">E-mail</label>
-192|202|      <input id="authEmail" type="email" placeholder="voce@email.com" style="width:100%;padding:.8rem 1rem;border:1px solid var(--line);border-radius:12px;margin-top:.3rem;margin-bottom:.7rem;font-size:.95rem;font-family:inherit;">
-193|203|      <label style="font-size:.82rem;color:var(--muted);font-weight:600;">Senha</label>
-194|204|      <input id="authSenha" type="password" placeholder="••••••••" style="width:100%;padding:.8rem 1rem;border:1px solid var(--line);border-radius:12px;margin-top:.3rem;font-size:.95rem;font-family:inherit;">
-195|205|      <div style="text-align:right;margin-top:.4rem">
-196|206|        <a href="#" onclick="esqueciSenha();return false;" style="font-size:.82rem;color:var(--accent);font-weight:600;text-decoration:none;">Esqueci a senha</a>
-197|207|      </div>
-198|208|      <button class="btn btn-guest" id="btnAuth" onclick="fazerAuth()" style="margin-top:1rem">Entrar</button>
-199|209|      <button class="btn btn-ghost" onclick="entrarTeste()" style="margin-top:.6rem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg> Entrar em modo teste (sem cadastro)</button>
-200|210|      <div id="msgAuth" class="msg" style="margin-top:1rem"></div>
-201|211|    </div>
-202|212|
-203|213|    <div class="section-title">Como funciona</div>
-204|214|    <div class="card">
-205|215|      <h3>1 · Aceite os termos</h3>
-206|216|      <p>Ao entrar, você lê e concorda com os Termos de Serviço. Sem jargon — só o essencial.</p>
-207|217|    </div>
-208|218|    <div class="card">
-209|219|      <h3>2 · Fique livre</h3>
-210|220|      <p>Você entra sem vínculo. Pode propor ou receber uma conexão quando quiser.</p>
-211|221|    </div>
-212|222|    <div class="card">
-213|223|      <h3>3 · Façam a proposta</h3>
-214|224|      <p>Um pede, o outro aceita ou recusa. Quando aceito, o vínculo fica ativo para os dois.</p>
-215|225|    </div>
-216|226|  </div>
-217|227|
-218|228|  <!-- TERMOS -->
-219|229|  <div id="view-termos" class="hidden">
-220|230|    <div class="card">
-221|231|      <h3>Termos de Serviço</h3>
-222|232|      <div class="box-termos" id="termosTexto"></div>
-223|233|      <label class="check"><input type="checkbox" id="chkTermos"> <span>Li e aceito os Termos de Serviço e a Política de Privacidade.</span></label>
-224|234|      <div id="msgTermos" class="msg"></div>
-225|235|      <button class="btn btn-guest" onclick="aceitarTermos()">Aceitar e continuar</button>
-226|236|    </div>
-227|237|  </div>
-228|238|
-229|239|  <!-- APP (pos-login: telas com bottom nav) -->
-230|240|  <div id="view-app" class="hidden">
-231|241|
-232|242|    <!-- TELA: INICIO -->
-233|243|    <div class="screen ativo" id="screen-inicio">
-234|244|      <div class="wrap-nav">
-235|245|        <div class="banner"></div>
-236|246|        <div class="profile-head">
-237|247|          <img class="avatar-xl" id="avatarInicio" alt="avatar" src="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-238|248|          <div class="avatar avatar-xl" id="avatarInicioIni" style="display:none">?</div>
-239|249|          <div class="profile-name" id="nomeUser">...</div>
-240|250|          <div class="profile-handle" id="inicioHandle">@voce</div>
-241|251|        </div>
-242|252|        <div class="card card-block" style="margin-top:1.2rem;text-align:center;">
-243|253|          <div style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;">Juntos há</div>
-244|254|          <div style="font-size:2.2rem;font-weight:800;color:var(--accent);line-height:1;margin:.3rem 0;" id="inicioDias">0</div>
-245|255|          <div style="font-size:.82rem;color:var(--muted);" id="inicioSub2">dias de amor</div>
-246|256|        </div>
-247|257|        <div class="card card-block" style="background:var(--accent-grad);color:#fff;border:none;box-shadow:0 14px 34px rgba(124,45,58,.22);">
-248|258|          <div style="display:flex;align-items:center;gap:.7rem;">
-249|259|            <div style="font-size:1.8rem;color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-9.5-9C1 8 2.5 4.5 6 4.5c2 0 3.2 1.2 4 2.5.8-1.3 2-2.5 4-2.5 3.5 0 5 3.5 3.5 6.5C19 15.5 12 20 12 20z"/></svg></div>
-250|260|            <div>
-251|261|              <div style="font-weight:800;font-size:1.02rem">Seu compromisso, em um só lugar</div>
-252|262|              <div style="opacity:.92;font-size:.84rem;margin-top:.15rem">Proponha, aceite e acompanhe os dias do seu vínculo.</div>
-253|263|            </div>
-254|264|          </div>
-255|265|        </div>
-256|266|        <div class="section-title">Atividade</div>
-257|267|        <div class="post">
-258|268|          <div class="post-head">
-259|269|            <img class="avatar" id="postAvatar" src="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-260|270|            <div class="avatar" id="postAvatarIni" style="display:none">?</div>
-261|271|            <div>
-262|272|              <div class="nm" id="postNome">Sistema do Casal</div>
-263|273|              <div class="sub" id="postSub">agora mesmo</div>
-264|274|            </div>
-265|275|          </div>
-266|276|          <div class="post-body" id="postTexto">Que bom ter vocês aqui! Este é o cantinho de vocês.</div>
-267|277|          <div class="post-actions"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-9.5-9C1 8 2.5 4.5 6 4.5c2 0 3.2 1.2 4 2.5.8-1.3 2-2.5 4-2.5 3.5 0 5 3.5 3.5 6.5C19 15.5 12 20 12 20z"/></svg> Curtir</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg> Comentar</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5 15.4 17.5M15.4 6.5 8.6 10.5"/></svg> Compartilhar</span></div>
-268|278|        </div>
-269|279|      </div>
-270|280|    </div>
-271|281|        <div class="kpi" id="inicioKpi"></div>
-272|282|        <div class="card card-block" style="background:var(--accent-grad);color:#fff;border:none;box-shadow:0 14px 34px rgba(124,45,58,.22);">
-273|283|          <div style="display:flex;align-items:center;gap:.7rem;">
-274|284|            <div style="font-size:1.8rem;color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-9.5-9C1 8 2.5 4.5 6 4.5c2 0 3.2 1.2 4 2.5.8-1.3 2-2.5 4-2.5 3.5 0 5 3.5 3.5 6.5C19 15.5 12 20 12 20z"/></svg></div>
-275|285|            <div>
-276|286|              <div style="font-weight:800;font-size:1.02rem">Seu compromisso, em um só lugar</div>
-277|287|              <div style="opacity:.92;font-size:.84rem;margin-top:.15rem">Proponha, aceite e acompanhe os dias do seu vínculo.</div>
-278|288|            </div>
-279|289|          </div>
-280|290|        </div>
-281|291|        <div class="card card-block">
-282|292|          <h3 style="margin-bottom:.6rem">Seu resumo</h3>
-283|293|          <div class="list-row"><span class="k">Status do vínculo</span><span class="v" id="inicioStatus">—</span></div>
-284|294|          <div class="list-row"><span class="k">Propostas recebidas</span><span class="v" id="inicioRec">0</span></div>
-285|295|          <div class="list-row"><span class="k">Propostas enviadas</span><span class="v" id="inicioEnv">0</span></div>
-286|296|          <div class="list-row"><span class="k">Termos</span><span class="v" id="inicioTermos">—</span></div>
-287|297|        </div>
-288|298|      </div>
-289|299|    </div>
-290|300|
-291|301|    <!-- TELA: VINCULO -->
-292|302|    <div class="screen" id="screen-vinculo">
-293|303|      <div class="wrap-nav">
-294|304|        <div id="vinculoSolteiro">
-295|305|          <div class="card card-block fade">
-296|306|            <h3 style="margin-bottom:.2rem">Propor um vínculo</h3>
-297|307|            <p style="margin-bottom:1rem">Envie um convite para o email da pessoa. Ela pode aceitar ou recusar.</p>
-298|308|            <div id="msgProp" class="msg"></div>
-299|309|            <label style="font-size:.85rem;color:var(--muted)">Email da pessoa</label>
-300|310|            <input type="email" id="propEmail" placeholder="pessoa@email.com" style="width:100%;padding:.85rem;margin:.3rem 0 1rem;border:1px solid var(--line);border-radius:12px;font-size:.95rem">
-301|311|            <label style="font-size:.85rem;color:var(--muted)">Mensagem (opcional)</label>
-302|312|            <textarea id="propMsg" placeholder="Quer se vincular comigo?" style="width:100%;padding:.85rem;margin:.3rem 0 1rem;border:1px solid var(--line);border-radius:12px;font-size:.95rem;min-height:80px;resize:vertical"></textarea>
-303|313|            <button class="btn btn-guest" onclick="fazerProposta()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg> Enviar proposta</button>
-304|314|          </div>
-305|315|
-306|316|          <div class="section-title">Propostas recebidas</div>
-307|317|          <div id="boxRecebidas"><div class="vazio">Nenhuma proposta recebida.</div></div>
-308|318|
-309|319|          <div class="section-title">Propostas enviadas</div>
-310|320|          <div id="boxEnviadas"><div class="vazio">Você ainda não enviou propostas.</div></div>
-311|321|        </div>
-312|322|
-313|323|        <div id="vinculoCasado" class="hidden">
-314|324|          <div class="hero-casal fade">
-315|325|            <div class="casal-avatar"><div class="ring2"></div></div>
-316|326|            <div class="casal-nome">Vocês estão vinculados!</div>
-317|327|          </div>
-318|328|          <div class="linha-vinculo">
-319|329|            <div class="p"></div>
-320|330|            <div class="heart"></div>
-321|331|            <div class="p"></div>
-322|332|          </div>
-323|333|          <div style="text-align:center;font-size:1.05rem;font-weight:700;color:var(--accent);margin-bottom:.2rem">
-324|334|            <span id="nomeUser2">...</span> &amp; <span id="nomeParceiro">...</span>
-325|335|          </div>
-<div style="text-align:center" class="selo">Vínculo ativo</div>
-327|337|          <div style="text-align:center;margin-top:1rem"><button class="btn btn-outline" onclick="navTo('casal')">Ver área do casal →</button></div>
-328|338|        </div>
-329|339|      </div>
-330|340|    </div>
-331|341|
-332|342|    <!-- TELA: CASAL -->
-333|343|    <div class="screen" id="screen-casal">
-334|344|      <div class="wrap-nav">
-335|345|        <div id="casalVazio" class="vazio" style="padding:3rem 0">Você ainda não tem um vínculo ativo.<br>Vá em <b>Vínculo</b> e proponha um.</div>
-336|346|        <div id="casalConteudo" class="hidden">
-337|347|          <div class="hero-casal fade">
-338|348|            <div class="casal-avatar"><div class="ring2"></div></div>
-339|349|            <div class="casal-nome"><span id="casalNomeA">...</span> &amp; <span id="casalNomeB">...</span></div>
-340|350|            <div class="casal-sub">Juntos há</div>
-341|351|            <div class="ring-dias">
-342|352|              <svg viewBox="0 0 120 120" width="150" height="150">
-343|353|                <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c0392b"/><stop offset="1" stop-color="#f1a7b0"/></linearGradient></defs>
-344|354|                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(192,57,43,.12)" stroke-width="10"/>
-345|355|                <circle cx="60" cy="60" r="52" fill="none" stroke="url(#rg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="40" transform="rotate(-90 60 60)"/>
-346|356|              </svg>
-347|357|              <div class="ring-dias-num"><span id="contadorDiasNum">0</span><small>dias</small></div>
-348|358|            </div>
-349|359|          </div>
-350|360|          <div class="kpi" id="contador"></div>
-351|361|          <div class="card card-block">
-352|362|            <h3 style="margin-bottom:.4rem">Recado do casal</h3>
-353|363|            <div class="msg-casal" id="msgCasal">"Juntos é melhor. Este é o cantinho de vocês no Sistema do Casal."</div>
-354|364|          </div>
-355|365|          <div class="card card-block">
-356|366|            <h3 style="margin-bottom:.4rem">Detalhes do vínculo</h3>
-357|367|            <div class="list-row"><span class="k">ID do vínculo</span><span class="v" id="vid">-</span></div>
-358|368|            <div class="list-row"><span class="k">Desde</span><span class="v" id="casalDesde">-</span></div>
-359|369|          </div>
-360|370|        </div>
-361|371|      </div>
-362|372|    </div>
-363|373|
-364|374|    <!-- TELA: PERFIL -->
-365|375|    <div class="screen" id="screen-perfil">
-366|376|      <div class="wrap-nav">
-367|377|        <div class="banner"></div>
-368|378|        <div class="profile-head">
-369|379|          <img class="avatar-xl" id="perfilAvatar" alt="avatar" src="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-370|380|          <div class="avatar avatar-xl" id="perfilAvatarIni" style="display:none">?</div>
-371|381|          <div class="edit-foto" onclick="document.getElementById('inputFoto').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg> Alterar foto</div>
-372|382|          <input type="file" id="inputFoto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
-373|383|          <div class="profile-name" id="perfilNome">...</div>
-374|384|          <div class="profile-handle" id="perfilHandle">@voce</div>
-375|385|        </div>
-376|386|        <div class="card card-block">
-377|387|          <h3 style="margin-bottom:.6rem">Sua conta</h3>
-378|388|          <div class="list-row"><span class="k">Nome</span><span class="v" id="perfilNome2">—</span></div>
-379|389|          <div class="list-row"><span class="k">Email</span><span class="v" id="perfilEmail">—</span></div>
-380|390|          <div class="list-row"><span class="k">Termos aceitos</span><span class="v" id="perfilTermos">—</span></div>
-381|391|          <div class="list-row"><span class="k">Administrador</span><span class="v" id="perfilAdmin">—</span></div>
-382|392|        </div>
-383|393|        <div id="perfilAdminBox" class="hidden">
-384|394|          <button class="btn btn-outline" onclick="abrirAdmin()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg> Abrir painel admin</button>
-385|395|        </div>
-386|396|        <div style="height:.8rem"></div>
-387|397|        <button class="btn btn-ghost" onclick="sair()">Sair</button>
-388|398|      </div>
-389|399|    </div>
-390|400|
-391|401|    <!-- BOTTOM NAV -->
-392|402|    <nav class="bottom-nav" id="bottomNav">
-393|403|      <button class="ativo" onclick="navTo('inicio')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg></span>Início</button>
-394|404|      <button onclick="navTo('vinculo')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3.2"/><path d="M12 5V3M12 21v-2M5 12H3M21 12h-2"/></svg></span>Vínculo</button>
-395|405|      <button onclick="navTo('casal')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-9.5-9C1 8 2.5 4.5 6 4.5c2 0 3.2 1.2 4 2.5.8-1.3 2-2.5 4-2.5 3.5 0 5 3.5 3.5 6.5C19 15.5 12 20 12 20z"/></svg></span>Casal</button>
-396|406|      <button onclick="navTo('perfil')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></span>Perfil</button>
-397|407|    </nav>
-398|408|  </div>
-399|409|
-400|410|  <!-- PAINEL ADMIN -->
-401|411|  <div id="view-admin" class="hidden">
-402|412|    <div class="hero-casal">
-403|413|      <h2>Painel do Administrador</h2>
-404|414|      <p>Acesso total ao sistema. Use com responsabilidade.</p>
-405|415|    </div>
-406|416|    <div id="msgAdmin" class="msg"></div>
-407|417|    <div class="section-title">Usuários</div>
-408|418|    <div class="card" id="listaUsuarios"><p class="muted">Carregando...</p></div>
-409|419|    <div class="section-title">Vínculos</div>
-410|420|    <div class="card" id="listaVinculos"><p class="muted">Carregando...</p></div>
-411|421|    <button class="btn btn-ghost" onclick="mostrar('view-app')">← Voltar ao app</button>
-412|422|  </div>
-413|423|
-414|424|  <!-- REDEFINIR SENHA -->
-415|425|  <div id="view-reset" class="hidden">
-416|426|    <div class="hero-casal">
-417|427|      <div class="casal-avatar"><div class="ring2"></div></div>
-418|428|      <h2>Definir nova senha</h2>
-419|429|      <p>Informe sua nova senha para concluir a redefinição.</p>
-420|430|    </div>
-421|431|    <div class="card">
-422|432|      <label style="font-size:.82rem;color:var(--muted);font-weight:600;">Nova senha</label>
-423|433|      <input id="resetSenha" type="password" placeholder="Mínimo 6 caracteres" style="width:100%;padding:.8rem 1rem;border:1px solid var(--line);border-radius:12px;margin-top:.3rem;margin-bottom:.7rem;font-size:.95rem;font-family:inherit;">
-424|434|      <label style="font-size:.82rem;color:var(--muted);font-weight:600;">Confirmar senha</label>
-425|435|      <input id="resetSenha2" type="password" placeholder="Repita a senha" style="width:100%;padding:.8rem 1rem;border:1px solid var(--line);border-radius:12px;margin-top:.3rem;font-size:.95rem;font-family:inherit;">
-426|436|      <button class="btn btn-guest" onclick="confirmarReset()" style="margin-top:1rem">Redefinir senha</button>
-427|437|      <div id="msgReset" class="msg" style="margin-top:1rem"></div>
-428|438|    </div>
-429|439|  </div>
-430|440|
-431|441|</div>
-432|442|
-433|443|<script src="supabase-umd.js"></script>
-434|444|<script>
-435|445|const SUPABASE_URL = 'https://olgihvklxgxvyxcqrduq.supabase.co';
-436|446|const SUPABASE_ANON = 'eyJhbG...iXEI';
-437|447|const FUNC = SUPABASE_URL + '/functions/v1';
-438|448|const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-439|449|
-440|450|// corações flutuantes
-441|451|(function(){
-442|452|  const box = document.getElementById('hearts');
-443|453|  if(!box) return;
-444|454|  445|455|  for(let i=0;i<14;i++){
-446|456|    const s=document.createElement('span');
-447|457|    s.textContent=emojis[i%emojis.length];
-448|458|    s.style.left=(Math.random()*100)+'%';
-449|459|    const dur=8+Math.random()*10;
-450|460|    s.style.animationDuration=dur+'s';
-451|461|    s.style.animationDelay=(-Math.random()*dur)+'s';
-452|462|    const sc=.7+Math.random()*1.1;
-453|463|    s.style.fontSize=(1.1*sc)+'rem';
-454|464|    box.appendChild(s);
-455|465|  }
-456|466|})();
-457|467|
-458|468|// ao abrir o link de redefinição de senha (?reset=1), mostra a tela de nova senha
-459|469|(function(){
-460|470|  const params = new URLSearchParams(window.location.search);
-461|471|  if(params.get('reset')==='1' || params.has('access_token')){
-462|472|    window.addEventListener('load', async ()=>{
-463|473|      const { data } = await sb.auth.getSession();
-464|474|      if(data.session){
-465|475|        mostrar('view-reset');
-466|476|      }
-467|477|    });
-468|478|  }
-469|479|})();
-470|480|
-471|481|const TERMOS = `TERMOS DE SERVIÇO E POLÍTICA DE PRIVACIDADE
-472|482|
-473|483|1. NATUREZA DO SERVIÇO
-474|484|Este aplicativo é um espaço para duas pessoas firmarem e celebrar o vínculo entre elas, com carinho e respeito.
-475|485|
-476|486|2. CONSENTIMENTO
-477|487|Ao aceitar, você declara ter pelo menos 18 anos (ou capacidade legal equivalente) e consentir voluntariamente em utilizar a plataforma para criar perfil, propor e aceitar vínculos com outras pessoas.
-478|488|
-479|489|3. DADOS PESSOAIS (LGPD)
-480|490|Coletamos e processamos: nome, email (se houver) e o registro de seus vínculos e aceites de termos. Seus dados ficam armazenados no Supabase e são usados exclusivamente para o funcionamento do app. Você pode solicitar a exclusão da conta e dos dados a qualquer momento.
-481|491|
-482|492|4. VÍNCULOS
-483|493|As propostas são voluntárias e podem ser recusadas livremente. O vínculo representa o compromisso mútuo entre as duas pessoas, e cada uma é responsável pelo conteúdo das mensagens.
-484|494|
-485|495|5. CONDUTA
-486|496|É vedado o uso para assédio, falsidade ideológica ou práticas ilícitas. Violações podem resultar no bloqueio da conta.
-487|497|
-488|498|6. ISENÇÃO
-489|499|O app é fornecido "como está", sem garantias. Os criadores não se responsabilizam por danos decorrentes do uso.
-490|500|
-491|501|7. ACEITE
-492|502|Ao marcar a caixa e continuar, você confirma que leu, compreendeu e aceitou este Termo na íntegra.`;
-493|503|
-494|504|function token(){ return localStorage.getItem('sb_token'); }
-495|505|function setToken(t){ t ? localStorage.setItem('sb_token', t) : localStorage.removeItem('sb_token'); }
-496|506|function mostrar(v){ ['view-landing','view-termos','view-app'].forEach(x=>document.getElementById(x).classList.toggle('hidden', x!==v)); document.getElementById('topbar').style.display = (v==='view-landing')?'none':'flex'; }
-497|507|function msg(id,t,x){ const e=document.getElementById(id); e.textContent=t; e.className='msg '+x; e.style.display='block'; }
-498|508|function sair(){ setToken(null); sb.auth.signOut(); mostrar('view-landing'); }
-499|509|function authH(){ return { 'Authorization':'Bearer '+token(), 'apikey': sb.supabaseKey }; }
-500|510|async function call(fn, opts={}){ return fetch(FUNC+'/'+fn, { headers: authH(), ...opts }); }
-501|511|
-502|512|document.getElementById('termosTexto').textContent = TERMOS;
-503|513|
-504|514|let _tab='login';
-505|515|function trocaTab(t){
-506|516|  _tab=t;
-507|517|  document.getElementById('tabLogin').className = 'btn btn-sm ' + (t==='login'?'btn-outline tab-ativo':'btn-ghost');
-508|518|  document.getElementById('tabReg').className   = 'btn btn-sm ' + (t==='reg'?'btn-outline tab-ativo':'btn-ghost');
-509|519|  document.getElementById('campoNome').classList.toggle('hidden', t!=='reg');
-510|520|  document.getElementById('btnAuth').textContent = t==='login' ? 'Entrar' : 'Criar conta';
-511|521|  msg('msgAuth','');
-512|522|}
-513|523|async function fazerAuth(){
-514|524|  const email = (document.getElementById('authEmail').value||'').trim();
-515|525|  const senha = document.getElementById('authSenha').value||'';
-516|526|  const nome  = (document.getElementById('authNome').value||'').trim();
-517|527|  if(!email || !senha) return msg('msgAuth','Preencha e-mail e senha.','erro');
-518|528|  if(senha.length < 6) return msg('msgAuth','A senha precisa ter ao menos 6 caracteres.','erro');
-519|529|  if(_tab==='reg'){
-520|530|    try {
-521|531|      const { data, error } = await sb.auth.signUp({ email, password: senha, options:{ data:{ full_name: nome || email.split('@')[0] } } });
-522|532|      if(error) return msg('msgAuth', error.message,'erro');
-523|533|      if(data.session && data.user){
-524|534|        setToken(data.session.access_token);
-525|535|        await garantirPerfil(data.user, nome);
-526|536|        return entrarApp();
-527|537|      }
-528|538|      // confirmação de email exigida
-529|539|      msg('msgAuth','Conta criada! Verifique seu e-mail para confirmar e depois entre.','ok');
-530|540|    } catch(e){ msg('msgAuth','Erro: '+String(e),'erro'); }
-531|541|  } else {
-532|542|    try {
-533|543|      const { data, error } = await sb.auth.signInWithPassword({ email, password: senha });
-534|544|      if(error) return msg('msgAuth', error.message,'erro');
-535|545|      setToken(data.session?.access_token);
-536|546|      await garantirPerfil(data.user);
-537|547|      entrarApp();
-538|548|    } catch(e){ msg('msgAuth','Erro: '+String(e),'erro'); }
-539|549|  }
-540|550|}
-541|551|async function garantirPerfil(user, nomeOverride){
-542|552|  let nome = nomeOverride || user.user_metadata?.full_name || user.user_metadata?.name || (user.email||'Usuário');
-543|553|  const email = user.email || '';
-544|554|  try { await sb.from('perfis').upsert({ id: user.id, nome, email }); } catch(e){}
-545|555|}
-546|556|async function esqueciSenha(){
-547|557|  const email = (document.getElementById('authEmail').value||'').trim();
-548|558|  if(!email) return msg('msgAuth','Informe seu e-mail para enviarmos o link de redefinição.','erro');
-549|559|  try {
-550|560|    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/?reset=1' });
-551|561|    if(error) return msg('msgAuth', error.message,'erro');
-552|562|    msg('msgAuth','Enviamos um link de redefinição para '+email+'. Verifique sua caixa de entrada.','ok');
-553|563|  } catch(e){ msg('msgAuth','Erro: '+String(e),'erro'); }
-554|564|}
-555|565|async function confirmarReset(){
-556|566|  const s1 = document.getElementById('resetSenha').value||'';
-557|567|  const s2 = document.getElementById('resetSenha2').value||'';
-558|568|  if(!s1 || s1.length < 6) return msg('msgReset','A senha precisa ter ao menos 6 caracteres.','erro');
-559|569|  if(s1 !== s2) return msg('msgReset','As senhas não conferem.','erro');
-560|570|  try {
-561|571|    const { error } = await sb.auth.updateUser({ password: s1 });
-562|572|    if(error) return msg('msgReset', error.message,'erro');
-563|573|    msg('msgReset','Senha redefinida com sucesso! Redirecionando...','ok');
-564|574|    setTimeout(()=>{ window.location.search=''; entrarApp(); }, 1500);
-565|575|  } catch(e){ msg('msgReset','Erro: '+String(e),'erro'); }
-566|576|}
-567|577|async function entrarTeste(){
-568|578|  try {
-569|579|    const { data, error } = await sb.auth.signInAnonymously();
-570|580|    if(error) return msg('msgAuth','Erro no modo teste: '+error.message,'erro');
-571|581|    setToken(data.session?.access_token);
-572|582|    await garantirPerfil(data.user, 'Convidado(a)');
-573|583|    entrarApp();
-574|584|  } catch(e){ msg('msgAuth','Erro: '+String(e),'erro'); }
-575|585|}
-576|586|async function entrarApp(){
-577|587|  const { data:{ user } } = await sb.auth.getUser();
-578|588|  if(!user) return mostrar('view-landing');
-579|589|  await garantirPerfil(user);
-580|590|  const { data: p } = await sb.from('perfis').select('nome, email, termos_aceitos_em, is_admin, avatar_url').eq('id', user.id).maybeSingle();
-581|591|  if(!p?.termos_aceitos_em){ mostrar('view-termos'); return; }
-582|592|  // guarda flag admin p/ tela Perfil
-583|593|  window.__isAdmin = !!p?.is_admin;
-584|594|  window.__perfil = { nome: p?.nome || user.email?.split('@')[0] || 'Usuário', termos: !!p?.termos_aceitos_em, email: p?.email || user.email, avatar_url: p?.avatar_url || '' };
-585|595|  await carregarEstado();
-586|596|  mostrar('view-app');
-587|597|  navTo('inicio');
-588|598|}
-589|599|function navTo(tela){
-590|600|  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('ativo'));
-591|601|  const el=document.getElementById('screen-'+tela);
-592|602|  if(el) el.classList.add('ativo');
-593|603|  document.querySelectorAll('#bottomNav button').forEach(b=>b.classList.remove('ativo'));
-594|604|  // marca o botao correspondente
-595|605|  const map={inicio:0,vinculo:1,casal:2,perfil:3};
-596|606|  const idx=map[tela];
-597|607|  const nav=document.getElementById('bottomNav');
-598|608|  if(nav && idx!==undefined) nav.children[idx].classList.add('ativo');
-599|609|  if(tela==='perfil') preencherPerfil();
-600|610|  if(tela==='casal') carregarCasal();
-601|611|}
-602|612|async function abrirAdmin(){
-603|613|  await carregarAdmin();
-604|614|  mostrar('view-admin');
-605|615|}
-606|616|async function carregarAdmin(){
-607|617|  try {
-608|618|    const r=await call('admin-dados');
-609|619|    const j=await r.json();
-610|620|    if(!r.ok){ msg('msgAdmin', j.erro||'Erro', 'erro'); return; }
-611|621|    const lu=document.getElementById('listaUsuarios');
-612|622|    lu.innerHTML='';
-613|623|    (j.usuarios||[]).forEach(u=>{
-614|624|      const d=document.createElement('div'); d.className='proposta';
-615|625|      d.innerHTML=`<div class="nome">${u.nome||'(sem nome)'} ${u.is_admin?'<span class="badge pend">ADMIN</span>':''}</div><div class="txt">${u.email||''}</div>
-616|626|        <div class="row" style="margin-top:.6rem"><button class="btn btn-ghost btn-sm" onclick="adminDeletar('usuario','${u.id}')">Deletar</button></div>`;
-617|627|      lu.appendChild(d);
-618|628|    });
-619|629|    const lv=document.getElementById('listaVinculos');
-620|630|    lv.innerHTML='';
-621|631|    (j.vinculos||[]).forEach(v=>{
-622|632|      const d=document.createElement('div'); d.className='proposta';
-623|633|      d.innerHTML=`<div class="nome">${v.u1?.nome||'?'} & ${v.u2?.nome||'?'}</div><div class="txt">status: ${v.status}</div>
-624|634|        <div class="row" style="margin-top:.6rem"><button class="btn btn-ghost btn-sm" onclick="adminDeletar('vinculo','${v.id}')">Deletar</button></div>`;
-625|635|      lv.appendChild(d);
-626|636|    });
-627|637|  } catch(e){ msg('msgAdmin','Erro: '+String(e),'erro'); }
-628|638|}
-629|639|async function adminDeletar(alvo, id){
-630|640|  if(!confirm('Tem certeza que deseja deletar?')) return;
-631|641|  const r=await call('admin-acoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({alvo,id})});
-632|642|  const j=await r.json();
-633|643|  if(r.ok){ msg('msgAdmin', j.mensagem, 'ok'); await carregarAdmin(); }
-634|644|  else msg('msgAdmin', j.erro||'Erro', 'erro');
-635|645|}
-636|646|async function aceitarTermos(){
-637|647|  if(!document.getElementById('chkTermos').checked) return msg('msgTermos','Marque a caixa para aceitar os termos','erro');
-638|648|  const uid=(await sb.auth.getUser()).data.user.id;
-639|649|  const { error } = await sb.from('perfis').update({ termos_aceitos_em: new Date().toISOString() }).eq('id', uid);
-640|650|  if(error) return msg('msgTermos', error.message, 'erro');
-641|651|  await carregarEstado();
-642|652|  mostrar('view-app');
-643|653|}
-644|654|async function carregarEstado(){
-645|655|  const r = await call('meu-vinculo');
-646|656|  const j = await r.json();
-647|657|  if(!r.ok){ console.error(j); return; }
-648|658|  document.getElementById('nomeUser').textContent = j.nome || '...';
-649|659|  if(j.vinculo_ativo){
-650|660|    window.__vinculoAtivo = j.vinculo_ativo;
-651|661|    document.getElementById('vinculoSolteiro').classList.add('hidden');
-652|662|    document.getElementById('vinculoCasado').classList.remove('hidden');
-653|663|    document.getElementById('nomeUser2').textContent = j.nome || '...';
-654|664|    document.getElementById('nomeParceiro').textContent = j.vinculo_ativo.parceiro || '...';
-655|665|    return;
-656|666|  }
-657|667|  window.__vinculoAtivo = null;
-658|668|  document.getElementById('vinculoSolteiro').classList.remove('hidden');
-659|669|  document.getElementById('vinculoCasado').classList.add('hidden');
-660|670|  const lr=document.getElementById('boxRecebidas');
-661|671|  if(j.pendentes?.length){
-662|672|    lr.innerHTML='';
-663|673|    j.pendentes.forEach(p=>{
-664|674|      const d=document.createElement('div'); d.className='prop-card fade';
-665|675|      const ini=(p.prop?.nome||'?').trim().charAt(0).toUpperCase();
-666|676|      d.innerHTML='<div class="quem"><div class="av">'+ini+'</div><div class="nm">'+ (p.prop?.nome||'Alguém') +'</div></div>'+
-667|677|        '<div class="tx">"'+(p.mensagem||'Quer se vincular com você')+'"</div>'+
-668|678|        '<div class="duplo"><button class="btn btn-guest btn-sm" onclick="responder('+p.id+',\'aceito\')">Aceitar</button><button class="btn btn-ghost btn-sm" onclick="responder('+p.id+',\'recusado\')">Recusar</button></div>';
-669|679|      lr.appendChild(d);
-670|680|    });
-671|681|  } else lr.innerHTML='<div class="vazio">Nenhuma proposta recebida.</div>';
-672|682|  const le=document.getElementById('boxEnviadas');
-673|683|  if(j.enviadas?.length){
-674|684|    le.innerHTML='';
-675|685|    j.enviadas.forEach(p=>{
-676|686|      const d=document.createElement('div'); d.className='prop-card fade';
-677|687|      const ini=(p.dest?.nome||'?').trim().charAt(0).toUpperCase();
-678|688|      d.innerHTML='<div class="quem"><div class="av">'+ini+'</div><div class="nm">Para: '+(p.dest?.nome||'...')+'</div></div>'+
-679|689|        '<div class="tx">"'+(p.mensagem||'')+'"</div>'+
-680|690|        '<span class="badge pend">Pendente</span>';
-681|691|      le.appendChild(d);
-682|692|    });
-683|693|  } else le.innerHTML='<div class="vazio">Você ainda não enviou propostas.</div>';
-684|694|  // ---- INICIO resumo (estetica rede social) ----
-685|695|  const nomeJ = j.nome || 'Usuário';
-686|696|  const iniJ = nomeJ.trim().charAt(0).toUpperCase() || '?';
-687|697|  // avatar inicio
-688|698|  const avI = document.getElementById('avatarInicio');
-689|699|  const avIi = document.getElementById('avatarInicioIni');
-690|700|  if(window.__perfil?.avatar_url){ avI.src = window.__perfil.avatar_url; avI.style.display='block'; avIi.style.display='none'; }
-691|701|  else { avI.style.display='none'; avIi.style.display='flex'; avIi.textContent = iniJ; }
-692|702|  document.getElementById('nomeUser').textContent = nomeJ;
-693|703|  document.getElementById('inicioHandle').textContent = '@' + (window.__perfil?.email ? window.__perfil.email.split('@')[0] : nomeJ.toLowerCase().replace(/\s/g,''));
-694|704|  // post
-695|705|  document.getElementById('postNome').textContent = nomeJ;
-696|706|  const pAv = document.getElementById('postAvatar'), pAvI = document.getElementById('postAvatarIni');
-697|707|  if(window.__perfil?.avatar_url){ pAv.src = window.__perfil.avatar_url; pAv.style.display='block'; pAvI.style.display='none'; }
-698|708|  else { pAv.style.display='none'; pAvI.style.display='flex'; pAvI.textContent = iniJ; }
-699|709|  if(j.vinculo_ativo){
-700|710|    document.getElementById('inicioSub').textContent = 'Vocês estão vinculados.';
-701|711|    const desde=new Date(j.vinculo_ativo.desde);
-702|712|    const dias = isNaN(desde) ? 0 : Math.max(0, Math.floor((Date.now()-desde.getTime())/86400000));
-703|713|    document.getElementById('inicioDias').textContent = dias;
-704|714|    document.getElementById('inicioSub2').textContent = dias===1 ? 'dia de amor' : 'dias de amor';
-705|715|    document.getElementById('inicioStatus').innerHTML = '<span class="badge-dot ok"></span>Ativo';
-706|716|  } else {
-707|717|    document.getElementById('inicioDias').textContent = '0';
-708|718|    document.getElementById('inicioSub2').textContent = 'ainda sem vínculo';
-709|719|    document.getElementById('inicioStatus').innerHTML = '<span class="badge-dot no"></span>Sem vínculo';
-710|720|  }
-711|721|  document.getElementById('inicioRec').textContent = j.pendentes?.length || 0;
-712|722|  document.getElementById('inicioEnv').textContent = j.enviadas?.length || 0;
-document.getElementById('inicioTermos').textContent = j.termos_aceitos ? 'Sim' : 'Não';
-714|724|  window.__perfil = { nome: nomeJ, termos: j.termos_aceitos, email: window.__perfil?.email };
-715|725|  if(j.vinculo_ativo) carregarCasal();
-716|726|}
-717|727|function carregarCasal(){
-718|728|  const v = window.__vinculoAtivo;
-719|729|  if(!v) return;
-720|730|  document.getElementById('casalVazio').classList.add('hidden');
-721|731|  document.getElementById('casalConteudo').classList.remove('hidden');
-722|732|  document.getElementById('casalNomeA').textContent = window.__perfil?.nome || '...';
-723|733|  document.getElementById('casalNomeB').textContent = v.parceiro || '...';
-724|734|  document.getElementById('vid').textContent = v.id || '-';
-725|735|  const desde=new Date(v.desde);
-726|736|  document.getElementById('casalDesde').textContent = isNaN(desde) ? '-' : desde.toLocaleDateString('pt-BR');
-727|737|  const c=document.getElementById('contador');
-728|738|  if(!isNaN(desde)){
-729|739|    const dias=Math.max(0, Math.floor((Date.now()-desde.getTime())/86400000));
-730|740|    const anos=Math.floor(dias/365), resto=dias%365;
-731|741|    let txt=''; if(anos>0) txt+=anos+' ano'+(anos>1?'s':'')+' '; txt+=resto+' dia'+(resto!==1?'s':'');
-732|742|    c.innerHTML='<div class="c"><div class="n">'+dias+'</div><div class="l">Dias juntos</div></div><div class="c"><div class="n"></div><div class="l">'+txt+'</div></div>';
-733|743|    document.getElementById('contadorDiasNum').textContent = dias;
-734|744|  } else { c.innerHTML=''; document.getElementById('contadorDiasNum').textContent='0'; }
-735|745|}
-736|746|async function preencherPerfil(){
-737|747|  const { data:{ user } } = await sb.auth.getUser();
-738|748|  const nomeP = window.__perfil?.nome || '...';
-739|749|  const iniP = nomeP.trim().charAt(0).toUpperCase() || '?';
-740|750|  // avatar perfil
-741|751|  const pAv=document.getElementById('perfilAvatar'), pAvI=document.getElementById('perfilAvatarIni');
-742|752|  if(window.__perfil?.avatar_url){ pAv.src=window.__perfil.avatar_url; pAv.style.display='block'; pAvI.style.display='none'; }
-743|753|  else { pAv.style.display='none'; pAvI.style.display='flex'; pAvI.textContent=iniP; }
-744|754|  document.getElementById('perfilNome').textContent = nomeP;
-745|755|  document.getElementById('perfilHandle').textContent = '@' + (user?.email ? user.email.split('@')[0] : nomeP.toLowerCase().replace(/\s/g,''));
-746|756|  document.getElementById('perfilNome2').textContent = nomeP;
-747|757|  document.getElementById('perfilEmail').textContent = user?.email || (user?.is_anonymous ? 'Convidado (sem email)' : '—');
-748|758|  document.getElementById('perfilTermos').textContent = window.__perfil?.termos ? 'Sim' : 'Não';
-749|759|  document.getElementById('perfilAdmin').textContent = window.__isAdmin ? 'Sim' : 'Não';
-750|760|  document.getElementById('perfilAdminBox').classList.toggle('hidden', !window.__isAdmin);
-751|761|}
-752|762|async function uploadFoto(input){
-753|763|  const file = input.files && input.files[0];
-754|764|  if(!file) return;
-755|765|  const { data:{ user } } = await sb.auth.getUser();
-756|766|  if(!user) return;
-757|767|  const ext = (file.name.split('.').pop()||'png').toLowerCase();
-758|768|  const path = user.id + '.' + ext;
-759|769|  const { error:upErr } = await sb.storage.from('avatars').upload(path, file, { upsert:true, contentType:file.type });
-760|770|  if(upErr) return alert('Erro ao enviar foto: ' + upErr.message);
-761|771|  const { data:urlData } = sb.storage.from('avatars').getPublicUrl(path);
-762|772|  const url = urlData.publicUrl;
-763|773|  await sb.from('perfis').update({ avatar_url: url }).eq('id', user.id);
-764|774|  window.__perfil = window.__perfil || {}; window.__perfil.avatar_url = url;
-765|775|  // atualiza avatares visiveis
-766|776|  ['perfilAvatar','avatarInicio','postAvatar'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.src=url; el.style.display='block'; if(el.nextElementSibling) el.nextElementSibling.style.display='none'; } });
-767|777|  ['perfilAvatarIni','avatarInicioIni','postAvatarIni'].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display='none'; });
-768|778|  alert('Foto atualizada!');
-769|779|}
-770|780|async function responder(id, resp){
-771|781|  const r=await call('responder-vinculo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vinculo_id:id,resposta:resp})});
-772|782|  const j=await r.json();
-773|783|  if(r.ok){ msg('msgProp', j.mensagem, 'ok'); await carregarEstado(); }
-774|784|  else msg('msgProp', j.erro||'Erro', 'erro');
-775|785|}
-776|786|async function fazerProposta(){
-777|787|  const email=propEmail.value.trim(), msgText=propMsg.value.trim();
-778|788|  if(!email) return msg('msgProp','Informe o email da pessoa','erro');
-779|789|  const r=await call('propor-vinculo',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,mensagem:msgText})});
-780|790|  const j=await r.json();
-781|791|  if(r.ok){ msg('msgProp', j.mensagem, 'ok'); propEmail.value=''; propMsg.value=''; await carregarEstado(); }
-782|792|  else msg('msgProp', j.erro||'Erro', 'erro');
-783|793|}
-784|794|
-785|795|// início
-786|796|(async () => {
-787|797|  try {
-788|798|    const { data: sess } = await sb.auth.getSession();
-789|799|    if(sess?.session){ setToken(sess.session.access_token); entrarApp(); } else mostrar('view-landing');
-790|800|  } catch(e){ console.error(e); mostrar('view-landing'); }
-791|801|})();
-792|802|</script>
-793|803|</body>
-794|804|</html>
-795|805|
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#7c2d3a">
+<title>Cartório Virtual</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase-js.min.js"></script>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#111;--muted:#6b7280;--accent:#7c2d3a;--accent2:#a8445a;--soft:#f4eaec;--ok:#1f8a5b;--no:#c0392b;--line:#e5e7eb;--radius:14px;--grad:linear-gradient(135deg,#7c2d3a 0%,#a8445a 100%);--shadow:0 2px 8px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.04);--font:"Inter",-apple-system,BlinkMacSystemFont,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.screen{display:none;animation:fade .3s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,246,248,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.topbar .brand{font-weight:800;font-size:1.05rem;letter-spacing:-.02em}
+.topbar .brand span{color:var(--accent)}
+.topbar .actions{display:flex;gap:.5rem}
+.topbar .icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)}
+.wrap{padding:1.25rem;max-width:480px;margin:0 auto;padding-bottom:6rem}
+.hero{text-align:center;padding:2rem 0 1.5rem}
+.hero .logo{width:64px;height:64px;border-radius:20px;background:var(--grad);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:#fff;box-shadow:0 8px 24px rgba(124,45,58,.25)}
+.hero h1{font-size:1.5rem;font-weight:900;letter-spacing:-.03em;line-height:1.2}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--muted);margin-top:.75rem;font-size:.92rem;line-height:1.5}
+.card{background:var(--card);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;border:1px solid var(--line);box-shadow:var(--shadow)}
+.card h3{font-size:1rem;font-weight:800;margin-bottom:.5rem}
+.card p{color:var(--muted);font-size:.88rem;line-height:1.55}
+.section-label{font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:800;margin:1.5rem 0 .75rem;display:flex;align-items:center;gap:.4rem}
+.section-label::before{content:"";width:14px;height:2px;border-radius:2px;background:var(--accent)}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:.35rem}
+.field input,.field textarea,.field select{width:100%;padding:.85rem 1rem;border:1px solid var(--line);border-radius:12px;font-size:.95rem;font-family:inherit;background:var(--card);color:var(--ink);transition:.15s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--soft)}
+.field textarea{min-height:80px;resize:vertical}
+.btn{width:100%;padding:.95rem;border:none;border-radius:14px;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;font-family:inherit}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 6px 20px rgba(124,45,58,.25)}
+.btn-outline{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn-sm{padding:.65rem 1rem;font-size:.85rem;border-radius:10px}
+.btn-row{display:flex;gap:.75rem}
+.btn-row>*{flex:1}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;z-index:50;padding:.4rem 0;box-shadow:0 -4px 20px rgba(0,0,0,.06)}
+.bottom-nav button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.3rem 0;cursor:pointer;color:var(--muted);font-size:.62rem;font-weight:700}
+.bottom-nav button .ic{font-size:1.2rem;line-height:1}
+.bottom-nav button.active{color:var(--accent)}
+.bottom-nav button.active::after{content:"";width:20px;height:3px;border-radius:3px;background:var(--accent);margin-top:.1rem}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem;flex-shrink:0;border:2px solid #fff;box-shadow:var(--shadow)}
+.avatar-lg{width:88px;height:88px;font-size:2rem}
+.avatar-xl{width:110px;height:110px;font-size:2.6rem}
+.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.profile-header{text-align:center;padding:1.5rem 0}
+.profile-header .avatar-xl{margin:0 auto 1rem;border:4px solid #fff;box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.profile-header .name{font-size:1.4rem;font-weight:900;letter-spacing:-.02em}
+.profile-header .handle{color:var(--muted);font-size:.85rem;margin-top:.25rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1rem 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1rem .5rem;text-align:center;box-shadow:var(--shadow)}
+.stat .n{font-size:1.5rem;font-weight:900;color:var(--accent);line-height:1}
+.stat .l{font-size:.6rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:.3rem}
+.list-row{display:flex;align-items:center;justify-content:space-between;padding:.85rem 0;border-bottom:1px solid var(--line)}
+.list-row:last-child{border-bottom:none}
+.list-row .k{color:var(--muted);font-size:.85rem}
+.list-row .v{font-weight:800;font-size:.9rem;text-align:right;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.proposta{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1rem;margin-bottom:.75rem;box-shadow:var(--shadow)}
+.proposta .quem{display:flex;align-items:center;gap:.65rem;margin-bottom:.5rem}
+.proposta .quem .av{width:38px;height:38px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.95rem}
+.proposta .quem .nm{font-weight:800;font-size:.95rem}
+.proposta .tx{color:var(--muted);font-style:italic;font-size:.85rem;margin:.4rem 0 .6rem}
+.proposta .status{display:inline-block;padding:.25rem .65rem;border-radius:8px;font-size:.7rem;font-weight:700}
+.proposta .status.pend{background:#fef3cd;color:#856404}
+.proposta .status.aceito{background:#d4edda;color:#155724}
+.proposta .status.recusado{background:#f8d7da;color:#721c24}
+.empty{text-align:center;color:var(--muted);padding:2.5rem 1rem;font-size:.9rem}
+.badge{display:inline-block;padding:.25rem .65rem;border-radius:8px;font-size:.7rem;font-weight:700}
+.badge.ok{background:#d4edda;color:#155724}
+.badge.no{background:#f8d7da;color:#721c24}
+.toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.75rem 1.25rem;border-radius:12px;font-size:.85rem;font-weight:600;z-index:100;max-width:90%;text-align:center}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:80;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:var(--card);border-radius:20px 20px 0 0;padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:1.1rem;font-weight:800;margin-bottom:1rem}
+.modal .handle-bar{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 1rem}
+.tabs{display:flex;gap:.5rem;margin-bottom:1rem}
+.tabs button{flex:1;padding:.6rem;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:.82rem;font-weight:700;cursor:pointer;color:var(--muted);font-family:inherit}
+.tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.contrato-preview{background:#fafbfc;border:1px solid var(--line);border-radius:12px;padding:1.5rem;font-family:"Courier New",monospace;font-size:.78rem;line-height:1.7;color:#333;white-space:pre-wrap;max-height:300px;overflow-y:auto}
+.foto-upload{position:relative;display:inline-block;cursor:pointer}
+.foto-upload .edit-foto{position:absolute;bottom:0;right:0;width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;border:2px solid #fff}
+.ring-wrap{position:relative;display:inline-block}
+.ring-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.ring-num small{display:block;font-size:.6rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="screen active" id="screen-welcome">
+  <div class="wrap" style="max-width:400px">
+    <div class="hero">
+      <div class="logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 20s-7-4.5-9.5-9C1 8 2.5 4.5 6 4.5c2 0 3.2 1.2 4 2.5.8-1.3 2-2.5 4-2.5 3.5 0 5 3.5 3.5 6.5C19 15.5 12 20 12 20z"/></svg></div>
+      <h1>Cartório <span>Virtual</span></h1>
+      <p>Plataforma oficial para formalizar e comprovar o vínculo entre duas pessoas, com validade jurídica por meio de testemunhas.</p>
+    </div>
+    <div class="tabs">
+      <button class="active" onclick="switchTab('login')">Entrar</button>
+      <button onclick="switchTab('register')">Criar conta</button>
+    </div>
+    <div id="form-login">
+      <div class="field"><label>E-mail</label><input type="email" id="login-email" placeholder="seu@email.com"></div>
+      <div class="field"><label>Senha</label><div style="position:relative"><input type="password" id="login-pass" placeholder="Mínimo 6 caracteres" style="padding-right:50px"><button type="button" onclick="toggleSenha('login-pass')" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--accent);cursor:pointer;font-size:.75rem;font-weight:700">Mostrar</button></div></div>
+      <div style="display:flex;align-items:center;gap:.5rem;margin:.5rem 0"><input type="checkbox" id="login-lembrar" style="width:16px;height:16px;accent-color:var(--accent)"><label for="login-lembrar" style="font-size:.85rem;color:#555;cursor:pointer">Lembrar de mim</label></div>
+      <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
+      <div style="display:flex;align-items:center;gap:.5rem;margin:1rem 0"><div style="flex:1;height:1px;background:#e0e0e0"></div><span style="font-size:.75rem;color:#999">ou continue com</span><div style="flex:1;height:1px;background:#e0e0e0"></div></div>
+      <button class="btn btn-ghost" onclick="loginGoogle()" style="width:100%;margin-bottom:.5rem;display:flex;align-items:center;justify-content:center;gap:.5rem"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Entrar com Google</button>
+      <button class="btn btn-ghost" onclick="loginGitHub()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:.5rem"><svg width="18" height="18" viewBox="0 0 24 24" fill="#24292F"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>Entrar com GitHub</button>
+    </div>
+    <div id="form-register" style="display:none">
+      <div class="field"><label>Nome completo</label><input type="text" id="reg-nome" placeholder="Seu nome"></div>
+      <div class="field"><label>CPF</label><input type="text" id="reg-cpf" placeholder="000.000.000-00" maxlength="14" oninput="formatCPF(this)"></div>
+      <div class="field"><label>Gênero</label><select id="reg-genero"><option value="masculino">Masculino</option><option value="feminino">Feminino</option></select></div>
+      <div class="field"><label>E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
+      <div class="field"><label>Senha</label><div style="position:relative"><input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" style="padding-right:50px"><button type="button" onclick="toggleSenha('reg-pass')" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--accent);cursor:pointer;font-size:.75rem;font-weight:700">Mostrar</button></div></div>
+      <div class="field"><label>Código de convite (opcional)</label><input type="text" id="reg-codigo" placeholder="Ex: CV-ABC12345"></div>
+      <button class="btn btn-primary" onclick="doRegister()">Criar conta</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-termos">
+  <div class="wrap" style="max-width:400px">
+    <div class="hero">
+      <div class="logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div>
+      <h1>Termos de <span>Uso</span></h1>
+    </div>
+    <div class="card" style="max-height:45vh;overflow:auto;font-size:.85rem;line-height:1.6;color:var(--muted)">
+      <h4 style="color:var(--accent);margin:.8rem 0 .3rem">1. Natureza do Serviço</h4><p>Esta plataforma é um espaço para duas pessoas firmarem e celebrar o vínculo entre elas.</p>
+      <h4 style="color:var(--accent);margin:.8rem 0 .3rem">2. Consentimento</h4><p>Ao aceitar, você declara ter pelo menos 18 anos e consentir voluntariamente.</p>
+      <h4 style="color:var(--accent);margin:.8rem 0 .3rem">3. Dados Pessoais</h4><p>Coletamos nome, CPF, RG, email, telefone, endereço e registros de vínculos.</p>
+      <h4 style="color:var(--accent);margin:.8rem 0 .3rem">4. Vínculos e Testemunhas</h4><p>As propostas são voluntárias. O vínculo representa o compromisso mútuo.</p>
+    </div>
+    <label style="display:flex;align-items:flex-start;gap:.6rem;font-size:.88rem;margin-bottom:.6rem"><input type="checkbox" id="chk-termos"> <span>Li e aceito os Termos de Serviço.</span></label>
+    <button class="btn btn-primary" onclick="acceptTermos()">Aceitar e continuar</button>
+  </div>
+</div>
+
+<div class="screen" id="screen-app">
+  <div class="topbar">
+    <div class="brand">Cartório <span>Virtual</span></div>
+    <div class="actions">
+      <button class="icon-btn" onclick="navTo('perfil')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></button>
+      <button class="icon-btn" onclick="doLogout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v9"/><path d="M6.4 7a8 8 0 1 0 11.2 0"/></svg></button>
+    </div>
+  </div>
+
+  <div class="wrap" id="tab-inicio">
+    <!-- SEM VÍNCULO -->
+    <div id="inicio-sem-vinculo">
+      <div class="profile-header">
+        <div class="avatar-xl" id="inicio-avatar">?</div>
+        <div class="name" id="inicio-nome">...</div>
+        <div class="handle" id="inicio-handle">@voce</div>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <h3>Propor um vínculo</h3>
+        <p style="margin-bottom:1rem;font-size:.9rem;color:#666">Envie um convite para alguém. Se a pessoa já tem conta, digite o e-mail.</p>
+        <div class="field"><label>E-mail da pessoa (opcional)</label><input type="email" id="prop-email" placeholder="Se a pessoa já tem conta"></div>
+        <div class="field"><label>Tipo de relacionamento</label><select id="prop-tipo" onchange="document.getElementById('campo-tipo-outro').style.display=this.value==='outro'?'block':'none'"><option value="namoro">Namoro</option><option value="noivado">Noivado</option><option value="casamento">Casamento</option><option value="uniao-estavel">União Estável</option><option value="companheiro">Companheiro(a)</option><option value="parceiro">Parceiro(a)</option><option value="amizade-colorada">Amizade Colorada</option><option value="ficante">Ficante</option><option value="pretendente">Pretendente</option><option value="conhecido">Conhecido(a)</option><option value="outro">Outro (personalizar)</option></select></div>
+        <div class="field" id="campo-tipo-outro" style="display:none"><label>Digite o tipo</label><input type="text" id="prop-tipo-outro" placeholder="Ex: Namoro sério, Crush..."></div>
+        <div class="field"><label>Modalidade</label><select id="prop-modalidade" onchange="document.getElementById('campo-modalidade-outro').style.display=this.value==='outro'?'block':'none'"><option value="presencial">Presencial</option><option value="virtual">Virtual</option><option value="misto">Misto</option><option value="outro">Outro</option></select></div>
+        <div class="field" id="campo-modalidade-outro" style="display:none"><label>Descreva</label><input type="text" id="prop-modalidade-outro" placeholder="Ex: Apenas chamadas de vídeo"></div>
+        <div class="field"><label>Mensagem (opcional)</label><textarea id="prop-msg" placeholder="Quer se vincular comigo?"></textarea></div>
+        <button class="btn btn-primary" onclick="sendProposta()">Enviar proposta</button>
+      </div>
+      <div class="section-label" style="margin-top:1rem">Recebidas</div>
+      <div id="box-recebidas"><div class="empty">Nenhuma proposta recebida.</div></div>
+      <div class="section-label">Enviadas</div>
+      <div id="box-enviadas"><div class="empty">Você ainda não enviou propostas.</div></div>
+    </div>
+    
+    <!-- COM VÍNCULO -->
+    <div id="inicio-com-vinculo" style="display:none">
+      <div class="profile-header">
+        <div style="display:flex;justify-content:center;gap:1rem;align-items:center">
+          <div style="text-align:center">
+            <div class="avatar-lg" id="casal-avatar-a"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></div>
+            <div style="font-size:.85rem;font-weight:700;margin-top:.3rem" id="casal-nome-a">...</div>
+          </div>
+          <div style="width:60px;height:60px;display:flex;align-items:center;justify-content:center;position:relative">
+            <svg width="50" height="50" viewBox="0 0 100 100" style="filter:drop-shadow(0 0 8px rgba(124,45,58,.4));animation:glow 2s ease-in-out infinite alternate">
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#d4af37"/>
+                  <stop offset="50%" style="stop-color:#f4e4bc"/>
+                  <stop offset="100%" style="stop-color:#d4af37"/>
+                </linearGradient>
+              </defs>
+              <circle cx="50" cy="55" r="32" fill="none" stroke="url(#ringGrad)" stroke-width="8"/>
+              <circle cx="50" cy="55" r="32" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+              <polygon points="50,15 42,28 50,22 58,28" fill="#fff" stroke="#d4af37" stroke-width="1"/>
+              <circle cx="50" cy="20" r="4" fill="#fff" opacity=".8"/>
+            </svg>
+            <style>@keyframes glow{from{filter:drop-shadow(0 0 5px rgba(124,45,58,.3))}to{filter:drop-shadow(0 0 15px rgba(212,175,55,.6))}}</style>
+          </div>
+          <div style="text-align:center">
+            <div class="avatar-lg" id="casal-avatar-b"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></div>
+            <div style="font-size:.85rem;font-weight:700;margin-top:.3rem" id="casal-nome-b">...</div>
+          </div>
+        </div>
+        <div class="handle">Juntos há</div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120" width="140" height="140"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(124,45,58,.12)" stroke-width="10"/><circle cx="60" cy="60" r="52" fill="none" stroke="url(#rg2)" stroke-width="10" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="40" transform="rotate(-90 60 60)"/></svg>
+          <div class="ring-num"><span id="casal-dias">0</span><small>dias</small></div>
+        </div>
+      </div>
+      <div class="stats"><div class="stat"><div class="n" id="casal-anos">0</div><div class="l">Anos</div></div><div class="stat"><div class="n" id="casal-meses">0</div><div class="l">Meses</div></div><div class="stat"><div class="n" id="casal-dias-resto">0</div><div class="l">Dias</div></div></div>
+      <div class="section-label">Detalhes do vínculo</div>
+      <div class="card"><div class="list-row"><span class="k">Tipo</span><span class="v" id="casal-tipo">--</span></div><div class="list-row"><span class="k">Desde</span><span class="v" id="casal-desde">--</span></div><div class="list-row"><span class="k">Modalidade</span><span class="v" id="casal-modalidade">--</span></div></div>
+      <div id="parceiro-dados"></div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn btn-primary btn-sm" onclick="evoluirRelacionamento()">Evoluir relacionamento</button>
+        <button class="btn btn-ghost btn-sm" onclick="encerrarVinculo()">Encerrar vínculo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" id="tab-contratos" style="display:none">
+    <div class="card" style="background:var(--grad);color:#fff;border:none">
+      <div style="display:flex;align-items:center;gap:.75rem"><div style="font-size:1.6rem"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div><div><div style="font-weight:800;font-size:.95rem">Contratos e Declarações</div><div style="opacity:.9;font-size:.82rem">Crie documentos com validade jurídica.</div></div></div>
+    </div>
+    <div style="text-align:right;margin:.75rem 0"><button class="btn btn-primary btn-sm" onclick="openModal('modal-novo-contrato')" style="width:auto">+ Novo documento</button></div>
+    <div class="section-label">Criados por mim</div><div id="box-contratos-criados"><div class="empty">Nenhum documento criado.</div></div>
+    <div class="section-label">Recebidos</div><div id="box-contratos-recebidos"><div class="empty">Nenhum documento recebido.</div></div>
+    <div class="section-label">Assinados</div><div id="box-contratos-assinados"><div class="empty">Nenhum documento assinado.</div></div>
+  </div>
+
+  <div class="wrap" id="tab-parentes" style="display:none">
+    <div class="card" style="background:var(--grad);color:#fff;border:none">
+      <div style="display:flex;align-items:center;gap:.75rem"><div style="font-size:1.6rem"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div><div style="font-weight:800;font-size:.95rem">Parentes e Família</div><div style="opacity:.9;font-size:.82rem">Cadastre familiares para serem testemunhas.</div></div></div>
+    </div>
+    <div style="text-align:right;margin:.75rem 0"><button class="btn btn-primary btn-sm" onclick="openModal('modal-novo-parente')" style="width:auto">+ Criar convite</button></div>
+    <div class="section-label">Meus parentes</div><div id="box-parentes"><div class="empty">Nenhum parente cadastrado.</div></div>
+  </div>
+
+  <div class="wrap" id="tab-perfil" style="display:none">
+    <div class="profile-header">
+      <div class="foto-upload" onclick="document.getElementById('input-foto').click()">
+        <div class="avatar-xl" id="perfil-avatar">?</div>
+        <div class="edit-foto"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+        <input type="file" id="input-foto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
+      </div>
+      <div class="name" id="perfil-nome">...</div>
+      <div class="handle" id="perfil-handle">@voce</div>
+    </div>
+    <div class="section-label">Dados pessoais</div>
+    <div class="card">
+      <div class="list-row"><span class="k">Nome</span><span class="v" id="perfil-nome2">--</span></div>
+      <div class="list-row"><span class="k">CPF</span><span class="v" id="perfil-cpf">--</span></div>
+      <div class="list-row"><span class="k">RG</span><span class="v" id="perfil-rg">--</span></div>
+      <div class="list-row"><span class="k">Gênero</span><span class="v" id="perfil-genero">--</span></div>
+      <div class="list-row"><span class="k">E-mail</span><span class="v" id="perfil-email">--</span></div>
+      <div class="list-row"><span class="k">Telefone</span><span class="v" id="perfil-telefone">--</span></div>
+      <div class="list-row"><span class="k">Nascimento</span><span class="v" id="perfil-nascimento">--</span></div>
+      <div class="list-row"><span class="k">Nacionalidade</span><span class="v" id="perfil-nacionalidade">--</span></div>
+      <div class="list-row"><span class="k">Naturalidade</span><span class="v" id="perfil-naturalidade">--</span></div>
+      <div class="list-row"><span class="k">Profissão</span><span class="v" id="perfil-profissao">--</span></div>
+      <div class="list-row"><span class="k">Estado civil</span><span class="v" id="perfil-estado-civil">--</span></div>
+      <div class="list-row"><span class="k">Nome da mãe</span><span class="v" id="perfil-mae">--</span></div>
+      <div class="list-row"><span class="k">Nome do pai</span><span class="v" id="perfil-pai">--</span></div>
+      <div class="list-row"><span class="k">Endereço</span><span class="v" id="perfil-endereco">--</span></div>
+    </div>
+    <div style="margin-top:1rem"><button class="btn btn-ghost" onclick="openModal('modal-editar-perfil')">Editar dados</button></div>
+    <div id="btn-admin" style="margin-top:.5rem;display:none"><button class="btn btn-primary" onclick="navTo('admin')">⚙️ Painel ADM</button></div>
+    <div style="margin-top:.5rem"><button class="btn btn-ghost" onclick="doLogout()">Sair</button></div>
+  </div>
+
+  <!-- ADMIN -->
+  <div class="wrap" id="tab-admin" style="display:none">
+    <div class="card" style="margin-bottom:1rem;background:var(--grad);color:#fff">
+      <h3>Painel Administrativo</h3>
+      <p style="font-size:.85rem;opacity:.9">Gerencie usuários e vínculos do Cartório Virtual</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="admin-total-users">0</div><div class="l">Usuários</div></div>
+      <div class="stat"><div class="n" id="admin-total-vinculos">0</div><div class="l">Vínculos</div></div>
+      <div class="stat"><div class="n" id="admin-total-propostas">0</div><div class="l">Propostas</div></div>
+    </div>
+    <div class="section-label">Usuários cadastrados</div>
+    <div id="admin-lista-users" style="margin-bottom:2rem"></div>
+    <div class="section-label">Vínculos ativos</div>
+    <div id="admin-lista-vinculos" style="margin-bottom:2rem"></div>
+    <div class="section-label">Propostas pendentes</div>
+    <div id="admin-lista-propostas"></div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="active" onclick="navTo('inicio')"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg></span>Início</button>
+    <button onclick="navTo('contratos')"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg></span>Documentos</button>
+    <button onclick="navTo('parentes')"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>Parentes</button>
+    <button onclick="navTo('perfil')"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></span>Perfil</button>
+  </nav>
+</div>
+
+<div class="modal-overlay" id="modal-novo-contrato"><div class="modal"><div class="handle-bar"></div><h3>Novo documento</h3>
+<div class="tabs"><button class="active" onclick="switchDocTab('contrato')">Contrato</button><button onclick="switchDocTab('declaracao')">Declaração</button><button onclick="switchDocTab('certificado')">Certificado</button><button onclick="switchDocTab('regras')">Regras</button></div>
+<div id="tab-doc-contrato">
+<div class="field"><label>Tipo de documento</label><select id="doc-tipo" onchange="updateDocModelos()"><option value="">-- Selecione --</option><option value="namoro">Namoro</option><option value="noivado">Noivado</option><option value="casamento">Casamento</option><option value="uniao-estavel">União Estável</option></select></div>
+<div class="field"><label>Modelo</label><select id="doc-modelo"><option value="">-- Selecione --</option></select></div>
+<div class="field"><label>Enviar para o(a) parceiro(a)</label><select id="doc-parceiro"><option value="">-- Selecione --</option></select></div>
+<div class="field"><label>Testemunhas</label><select id="doc-testemunhas" multiple size="3"></select></div>
+<div class="section-label">Pré-visualização</div><div class="contrato-preview" id="preview-doc">Selecione um modelo...</div>
+<div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-contrato')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="enviarDocumento()">Enviar</button></div>
+</div>
+<div id="tab-doc-declaracao" style="display:none">
+<div class="field"><label>Tipo</label><select id="dec-tipo" onchange="updateDecModelos()"><option value="">-- Selecione --</option><option value="namoro">Namoro</option><option value="noivado">Noivado</option><option value="casamento">Casamento</option><option value="uniao-estavel">União Estável</option></select></div>
+<div class="field"><label>Modelo</label><select id="dec-modelo"><option value="">-- Selecione --</option></select></div>
+<div class="field"><label>Enviar para</label><select id="dec-parceiro"><option value="">-- Selecione --</option></select></div>
+<div class="section-label">Pré-visualização</div><div class="contrato-preview" id="preview-dec">Selecione um modelo...</div>
+<div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-contrato')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="enviarDeclaracao()">Enviar</button></div>
+</div>
+<div id="tab-doc-certificado" style="display:none">
+<div class="field"><label>Tipo</label><select id="cert-tipo" onchange="updateCertModelos()"><option value="">-- Selecione --</option><option value="namoro">Namoro</option><option value="noivado">Noivado</option><option value="casamento">Casamento</option><option value="uniao-estavel">União Estável</option></select></div>
+<div class="field"><label>Modelo</label><select id="cert-modelo"><option value="">-- Selecione --</option></select></div>
+<div class="section-label">Pré-visualização</div><div class="contrato-preview" id="preview-cert">Selecione um modelo...</div>
+<div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-contrato')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="gerarCertificado()">Gerar</button></div>
+</div>
+<div id="tab-doc-regras" style="display:none">
+<div class="field"><label>Título das regras</label><input type="text" id="regras-titulo" placeholder="Ex: Regras do nosso namoro"></div>
+<div class="field"><label>Regras (uma por linha)</label><textarea id="regras-texto" style="min-height:120px" placeholder="1. Fidelidade é obrigatória&#10;2. Respeitar o espaço um do outro&#10;3. Comunicação honesta"></textarea></div>
+<div class="field"><label>Enviar para</label><select id="regras-parceiro"><option value="">-- Selecione --</option></select></div>
+<div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-contrato')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="enviarRegras()">Enviar</button></div>
+</div>
+</div></div>
+
+<div class="modal-overlay" id="modal-novo-parente"><div class="modal"><div class="handle-bar"></div><h3>Criar convite</h3><p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">Crie um convite para um parente. Ele só poderá criar conta com esse convite.</p><div class="field"><label>Parentesco</label><select id="parente-grau" onchange="document.getElementById('campo-parente-outro').style.display=this.value==='outro'?'block':'none'"><option value="mae">Mãe</option><option value="pai">Pai</option><option value="irmao">Irmão(a)</option><option value="avo">Avô(o)</option><option value="tio">Tio(a)</option><option value="primo">Primo(a)</option><option value="amigo">Amigo(a)</option><option value="outro">Outro (personalizar)</option></select></div><div class="field" id="campo-parente-outro" style="display:none"><label>Digite o parentesco</label><input type="text" id="parente-grau-outro" placeholder="Ex: Sogro(a), Cunhado(a)..."></div><div class="field"><label>E-mail do parente (opcional)</label><input type="email" id="parente-email" placeholder="Se quiser, informe o e-mail"></div><div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-parente')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="gerarConvite()">Gerar convite</button></div></div></div>
+
+<div class="modal-overlay" id="modal-editar-perfil"><div class="modal"><div class="handle-bar"></div><h3>Editar dados</h3><div class="field"><label>Nome</label><input type="text" id="edit-nome"></div><div class="field"><label>CPF</label><input type="text" id="edit-cpf" oninput="formatCPF(this)"></div><div class="field"><label>RG</label><input type="text" id="edit-rg"></div><div class="field"><label>Telefone</label><input type="text" id="edit-telefone" oninput="formatTelefone(this)"></div><div class="field"><label>Nascimento</label><input type="date" id="edit-nascimento"></div><div class="field"><label>Nacionalidade</label><input type="text" id="edit-nacionalidade"></div><div class="field"><label>Naturalidade</label><input type="text" id="edit-naturalidade"></div><div class="field"><label>Profissão</label><input type="text" id="edit-profissao"></div><div class="field"><label>Estado civil</label><select id="edit-estado-civil"><option value="">--</option><option value="solteiro">Solteiro(a)</option><option value="casado">Casado(a)</option><option value="divorciado">Divorciado(a)</option><option value="viuvo">Viúvo(a)</option><option value="uniao-estavel">União Estável</option></select></div><div class="field"><label>Nome da mãe</label><input type="text" id="edit-mae"></div><div class="field"><label>Nome do pai</label><input type="text" id="edit-pai"></div><div class="field"><label>Endereço</label><input type="text" id="edit-endereco"></div><div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-editar-perfil')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="salvarPerfil()">Salvar</button></div></div></div>
+
+<script>
+// ========== SUPABASE CONFIG ==========
+const SUPABASE_URL = 'https://uyunzkmfyffjdvbmgswf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dW56a21meWZmamR2Ym1nc3dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4NTQ3NzEsImV4cCI6MjEwMjQzMDc3MX0.CtwWrZmDlbGOoBRGVY3dy0ReFNP0vCO1pEDqs5HDc70';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ========== STATE ==========
+let currentUser = null;
+let currentPerfil = null;
+let currentVinculo = null;
+
+// ========== INIT ==========
+(async function init(){
+  // Check URL for OAuth callback or convite
+  const urlParams = new URLSearchParams(window.location.search);
+  const convite = urlParams.get('convite');
+
+  // Check existing session
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) {
+    await loadPerfil(session.user);
+    if (currentPerfil) {
+      if (!currentPerfil.termos) {
+        showScreen('screen-termos');
+      } else {
+        showScreen('screen-app');
+        navTo('inicio');
+      }
+    }
+  }
+
+  // Check for lastUser in localStorage (safe: only id/email/nome)
+  const lastUser = JSON.parse(localStorage.getItem('lastUser') || 'null');
+  if (lastUser && !currentUser) {
+    mostrarIconeContinuar(lastUser);
+  }
+})();
+
+// Auth state listener
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (session?.user) {
+    await loadPerfil(session.user);
+  }
+});
+
+// ========== HELPERS ==========
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function switchTab(t){ const b=document.querySelectorAll('#screen-welcome .tabs button'); b.forEach(x=>x.classList.remove('active')); if(t==='login'){b[0].classList.add('active');document.getElementById('form-login').style.display='block';document.getElementById('form-register').style.display='none';}else{b[1].classList.add('active');document.getElementById('form-login').style.display='none';document.getElementById('form-register').style.display='block';} }
+function toggleSenha(id){ const i=document.getElementById(id); const b=i.nextElementSibling; if(i.type==='password'){i.type='text';b.textContent='Esconder';}else{i.type='password';b.textContent='Mostrar';} }
+function formatCPF(i){let v=i.value.replace(/\D/g,'');if(v.length>11)v=v.slice(0,11);if(v.length>9)v=v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/,'$1.$2.$3-$4');else if(v.length>6)v=v.replace(/(\d{3})(\d{3})(\d{1,3})/,'$1.$2.$3');else if(v.length>3)v=v.replace(/(\d{3})(\d{1,3})/,'$1.$2');i.value=v;}
+function formatTelefone(i){let v=i.value.replace(/\D/g,'');if(v.length>11)v=v.slice(0,11);if(v.length>10)v=v.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3');else if(v.length>6)v=v.replace(/(\d{2})(\d{4,5})(\d{0,4})/,'($1) $2-$3');else if(v.length>2)v=v.replace(/(\d{2})(\d{0,5})/,'($1) $2');i.value=v;}
+function toast(msg){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
+function openModal(id){ document.getElementById(id).classList.add('active'); if(id==='modal-editar-perfil') fillEditForm(); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+function getPapel(tipo,genero){ const m=genero==='masculino'; switch(tipo){ case 'namoro': return m?'Namorado':'Namorada'; case 'noivado': return m?'Noivo':'Noiva'; case 'casamento': return m?'Marido':'Esposa'; case 'uniao-estavel': return m?'Companheiro':'Companheira'; case 'companheiro': return m?'Companheiro':'Companheira'; case 'parceiro': return m?'Parceiro':'Parceira'; case 'amizade-colorada': return m?'Amigo':'Amiga'; case 'ficante': return 'Ficante'; case 'pretendente': return 'Pretendente'; case 'conhecido': return m?'Conhecido':'Conhecida'; default: return m?'Parceiro':'Parceira'; } }
+
+// ========== AUTH ==========
+async function doRegister(){
+  const nome=document.getElementById('reg-nome').value.trim();
+  const cpf=document.getElementById('reg-cpf').value.trim();
+  const genero=document.getElementById('reg-genero').value;
+  const email=document.getElementById('reg-email').value.trim().toLowerCase();
+  const pass=document.getElementById('reg-pass').value;
+  const codigoConvite=document.getElementById('reg-codigo')?document.getElementById('reg-codigo').value.trim():'';
+  if(!nome||!cpf||!email||!pass) return toast('Preencha todos os campos');
+  if(pass.length<6) return toast('Senha: mínimo 6 caracteres');
+
+  // Check if email or CPF already exists
+  const { data: existing } = await sb.from('perfis').select('id').or(`email.eq.${email},cpf.eq.${cpf}`).single();
+  if (existing) return toast('E-mail ou CPF já cadastrado');
+
+  // Sign up with Supabase Auth
+  const { data: authData, error: authError } = await sb.auth.signUp({
+    email, password: pass,
+    options: { data: { nome, cpf, genero } }
+  });
+  if (authError) return toast('Erro ao criar conta: ' + authError.message);
+
+  // Insert perfil
+  const { error: insertError } = await sb.from('perfis').insert({
+    id: authData.user.id, email, nome, cpf, genero,
+    rg:'', telefone:'', nascimento:null, nacionalidade:'',
+    naturalidade:'', profissao:'', estado_civil:'', mae:'', pai:'',
+    endereco:'', foto:null
+  });
+  if (insertError) return toast('Erro ao salvar perfil');
+
+  currentUser = authData.user;
+  currentPerfil = { id: authData.user.id, email, nome, cpf, genero, termos: false };
+
+  // Check convite from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const conviteUrl = urlParams.get('convite');
+  const codigo = codigoConvite || conviteUrl;
+
+  if (codigo) {
+    // Find parentes invite
+    const { data: convite } = await sb.from('convites').select('*').eq('codigo', codigo).single();
+    if (convite) {
+      // Create parente record
+      await sb.from('parentes').insert({
+        casal_id: convite.user_id, nome, email, cpf, grau: convite.grau,
+        user_id: authData.user.id, status: 'aceito'
+      });
+      await sb.from('convites').update({ status: 'aceito' }).eq('codigo', codigo);
+      toast('Conta criada e vínculo confirmado!');
+    }
+  }
+
+  showScreen('screen-termos');
+}
+
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
+  const pass=document.getElementById('login-pass').value;
+  const lembrar=document.getElementById('login-lembrar')?document.getElementById('login-lembrar').checked:false;
+  if(!email||!pass) return toast('Preencha e-mail e senha');
+
+  const { data: authData, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) return toast('E-mail ou senha incorretos');
+
+  currentUser = authData.user;
+  await loadPerfil(authData.user);
+
+  // Save lastUser (safe: no secrets, just id/email/nome)
+  if (lembrar && currentPerfil) {
+    localStorage.setItem('lastUser', JSON.stringify({
+      id: currentUser.id, email: currentPerfil.email, nome: currentPerfil.nome
+    }));
+  } else {
+    localStorage.removeItem('lastUser');
+  }
+
+  if(!currentPerfil.termos) {
+    showScreen('screen-termos');
+  } else {
+    showScreen('screen-app');
+    navTo('inicio');
+  }
+}
+
+async function doLogout(){
+  const lastUser = currentPerfil ? {
+    id: currentUser.id, email: currentPerfil.email, nome: currentPerfil.nome
+  } : null;
+
+  await sb.auth.signOut();
+  currentUser = null;
+  currentPerfil = null;
+  currentVinculo = null;
+
+  showScreen('screen-welcome');
+
+  if (lastUser) {
+    localStorage.setItem('lastUser', JSON.stringify(lastUser));
+    setTimeout(()=> mostrarIconeContinuar(lastUser), 100);
+  }
+}
+
+function mostrarIconeContinuar(user){
+  const div=document.getElementById('icone-continuar');
+  if(div) div.remove();
+  const container=document.createElement('div');
+  container.id='icone-continuar';
+  container.style.cssText='position:fixed;bottom:2rem;right:2rem;z-index:9999;cursor:pointer;text-align:center';
+  container.innerHTML=`<div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#7c2d3a,#a8445a);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;font-weight:800;box-shadow:0 4px 15px rgba(124,45,58,.4);border:3px solid #fff;transition:.2s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${user.nome.charAt(0)}</div>
+    <div style="font-size:.7rem;color:#666;margin-top:.3rem;font-weight:600">${user.nome.split(' ')[0]}</div>`;
+  container.onclick=loginSalvo;
+  document.body.appendChild(container);
+}
+
+async function loginSalvo(){
+  const user = JSON.parse(localStorage.getItem('lastUser') || 'null');
+  if (!user) return toast('Faça login novamente');
+
+  // Need to ask for password since we don't store it
+  const pass = prompt('Digite sua senha para continuar:');
+  if (!pass) return;
+
+  const { data: authData, error } = await sb.auth.signInWithPassword({
+    email: user.email, password: pass
+  });
+  if (error) return toast('Senha incorreta');
+
+  currentUser = authData.user;
+  await loadPerfil(authData.user);
+
+  const icone=document.getElementById('icone-continuar');
+  if(icone) icone.remove();
+
+  if(!currentPerfil.termos) {
+    showScreen('screen-termos');
+  } else {
+    showScreen('screen-app');
+    navTo('inicio');
+  }
+}
+
+async function acceptTermos(){
+  if(!document.getElementById('chk-termos').checked) return toast('Marque a caixa para aceitar');
+  const { error } = await sb.from('perfis').update({ termos: true }).eq('id', currentUser.id);
+  if (error) return toast('Erro ao salvar');
+  currentPerfil.termos = true;
+  showScreen('screen-app');
+  navTo('inicio');
+}
+
+async function loginGoogle(){
+  const redirectTo = window.location.origin + window.location.pathname;
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo }
+  });
+  if (error) return toast('Erro ao iniciar login Google');
+}
+
+async function loginGitHub(){
+  const redirectTo = window.location.origin + window.location.pathname;
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'github',
+    options: { redirectTo }
+  });
+  if (error) return toast('Erro ao iniciar login GitHub');
+}
+
+// ========== PERFIL ==========
+async function loadPerfil(user){
+  if (!user) {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session?.user) return;
+    user = session.user;
+  }
+  currentUser = user;
+
+  const { data: perfil, error } = await sb.from('perfis').select('*').eq('id', user.id).single();
+  if (error && error.code === 'PGRST116') {
+    // Perfil doesn't exist yet (OAuth first login)
+    return;
+  }
+  currentPerfil = perfil;
+
+  if (perfil) {
+    // Check if admin
+    if (perfil.is_admin || perfil.email === 'rubensfernandes2112@gmail.com') {
+      const btnAdmin = document.getElementById('btn-admin');
+      if (btnAdmin) btnAdmin.style.display = 'block';
+    }
+    // Load vinculo
+    const { data: vinculos } = await sb.from('vinculos').select('*').or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`).eq('status', 'ativo').single();
+    currentVinculo = vinculos || null;
+  }
+}
+
+async function loadPerfilById(id){
+  const { data } = await sb.from('perfis').select('*').eq('id', id).single();
+  return data;
+}
+
+// ========== NAVIGATION ==========
+function navTo(tela){
+  ['inicio','vinculo','contratos','parentes','casal','perfil','admin'].forEach(t=>{ const el=document.getElementById('tab-'+t); if(el) el.style.display=t===tela?'block':'none'; });
+  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
+  const map={inicio:0,contratos:1,parentes:2,perfil:3};
+  const btn=document.querySelectorAll('.bottom-nav button')[map[tela]];
+  if(btn) btn.classList.add('active');
+  if(tela==='inicio') loadInicio();
+  if(tela==='contratos') loadContratos();
+  if(tela==='parentes') loadParentes();
+  if(tela==='perfil') loadPerfilView();
+  if(tela==='admin') loadAdmin();
+}
+
+// ========== INICIO ==========
+async function loadInicio(){
+  const ini=currentPerfil.nome.charAt(0).toUpperCase()||'?';
+  const av=document.getElementById('inicio-avatar');
+  if(currentPerfil.foto) av.innerHTML='<img src="'+currentPerfil.foto+'" alt="foto">'; else av.textContent=ini;
+  document.getElementById('inicio-nome').textContent=currentPerfil.nome;
+  document.getElementById('inicio-handle').textContent='@'+(currentPerfil.email?currentPerfil.email.split('@')[0]:currentPerfil.nome.toLowerCase().replace(/\s/g,''));
+
+  // Load vinculo from DB
+  const { data: vinculos } = await sb.from('vinculos').select('*').or(`user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`).eq('status', 'ativo').single();
+  currentVinculo = vinculos || null;
+
+  if(currentVinculo){
+    document.getElementById('inicio-sem-vinculo').style.display='none';
+    document.getElementById('inicio-com-vinculo').style.display='block';
+
+    const parceiroId = currentVinculo.user1_id === currentUser.id ? currentVinculo.user2_id : currentVinculo.user1_id;
+    const parceiro = await loadPerfilById(parceiroId);
+
+    const avA=document.getElementById('casal-avatar-a');
+    const avB=document.getElementById('casal-avatar-b');
+    if(currentPerfil.foto) avA.innerHTML='<img src="'+currentPerfil.foto+'" alt="foto">'; else avA.innerHTML='<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>';
+    if(parceiro&&parceiro.foto) avB.innerHTML='<img src="'+parceiro.foto+'" alt="foto">'; else avB.innerHTML='<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>';
+
+    document.getElementById('casal-nome-a').textContent=currentPerfil.nome.split(' ')[0]+' ('+getPapel(currentVinculo.tipo,currentPerfil.genero)+')';
+    document.getElementById('casal-nome-b').textContent=(parceiro?parceiro.nome.split(' ')[0]:'?')+' ('+getPapel(currentVinculo.tipo,parceiro?parceiro.genero:'masculino')+')';
+    const d=new Date(currentVinculo.desde); const dias=Math.max(0,Math.floor((Date.now()-d.getTime())/86400000));
+    document.getElementById('casal-dias').textContent=dias;
+    document.getElementById('casal-anos').textContent=Math.floor(dias/365);
+    document.getElementById('casal-meses').textContent=Math.floor((dias%365)/30);
+    document.getElementById('casal-dias-resto').textContent=(dias%365)%30;
+    document.getElementById('casal-tipo').textContent=currentVinculo.tipo||'--';
+    document.getElementById('casal-desde').textContent=d.toLocaleDateString('pt-BR');
+    document.getElementById('casal-modalidade').textContent=currentVinculo.modalidade||'--';
+
+    // Parceiro data
+    const parceiroSection=document.getElementById('parceiro-dados');
+    if(parceiro){
+      parceiroSection.style.display='block';
+      parceiroSection.innerHTML=`<div class="card" style="margin-top:1rem"><h3 style="margin-bottom:.4rem">${parceiro.nome.split(' ')[0]} (${getPapel(currentVinculo.tipo,parceiro.genero||'masculino')})</h3><div class="list-row"><span class="k">CPF</span><span class="v">${parceiro.cpf||'--'}</span></div><div class="list-row"><span class="k">E-mail</span><span class="v">${parceiro.email||'--'}</span></div><div class="list-row"><span class="k">Telefone</span><span class="v">${parceiro.telefone||'--'}</span></div><div class="list-row"><span class="k">Nascimento</span><span class="v">${parceiro.nascimento?new Date(parceiro.nascimento).toLocaleDateString('pt-BR'):'--'}</span></div><div class="list-row"><span class="k">Profissão</span><span class="v">${parceiro.profissao||'--'}</span></div><div class="list-row"><span class="k">Estado civil</span><span class="v">${parceiro.estado_civil||'--'}</span></div><div class="list-row"><span class="k">Endereço</span><span class="v">${parceiro.endereco||'--'}</span></div></div>`;
+    } else { parceiroSection.style.display='none'; }
+  } else {
+    document.getElementById('inicio-sem-vinculo').style.display='block';
+    document.getElementById('inicio-com-vinculo').style.display='none';
+  }
+
+  // Load propostas
+  const { data: propostasEnviadas } = await sb.from('propostas').select('*').eq('de_id', currentUser.id);
+  const { data: propostasRecebidas } = await sb.from('propostas').select('*').eq('para_id', currentUser.id);
+
+  // Render recebidas
+  const boxRecebidas=document.getElementById('box-recebidas');
+  if(propostasRecebidas && propostasRecebidas.length){
+    boxRecebidas.innerHTML='';
+    for (const p of propostasRecebidas) {
+      const dePerfil = await loadPerfilById(p.de_id);
+      const div=document.createElement('div');
+      div.className='proposta';
+      div.innerHTML=`<div class="quem"><div class="av">${dePerfil?dePerfil.nome.charAt(0):'?'}</div><div class="nm">${dePerfil?dePerfil.nome.split(' ')[0]:'?'}</div></div><div class="tx">${p.mensagem||'Proposta de vínculo'}</div><div style="font-size:.8rem;color:#555;margin:.3rem 0"><b>Tipo:</b> ${p.tipo} | <b>Modalidade:</b> ${p.modalidade||'--'}</div><div class="status ${p.status==='pendente'?'pend':p.status==='aceito'?'aceito':'recusado'}">${p.status==='pendente'?'Pendente':p.status==='aceito'?'Aceito':'Recusado'}</div><div class="btn-row" style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="verContratoProposta('${p.id}')">Ver contrato</button>${p.status==='pendente'?'<button class="btn btn-primary btn-sm" onclick="aceitarProposta(\''+p.id+'\')">Aceitar</button><button class="btn btn-ghost btn-sm" onclick="recusarProposta(\''+p.id+'\')">Recusar</button>':''}</div>`;
+      boxRecebidas.appendChild(div);
+    }
+  } else {
+    boxRecebidas.innerHTML='<div class="empty">Nenhuma proposta recebida.</div>';
+  }
+
+  // Render enviadas
+  const boxEnviadas=document.getElementById('box-enviadas');
+  if(propostasEnviadas && propostasEnviadas.length){
+    boxEnviadas.innerHTML='';
+    for (const p of propostasEnviadas) {
+      const paraPerfil = await loadPerfilById(p.para_id);
+      const div=document.createElement('div');
+      div.className='proposta';
+      div.innerHTML=`<div class="quem"><div class="av">${paraPerfil?paraPerfil.nome.charAt(0):'?'}</div><div class="nm">${paraPerfil?paraPerfil.nome.split(' ')[0]:'?'}</div></div><div class="tx">${p.mensagem||'Proposta de vínculo'}</div><div style="font-size:.8rem;color:#555;margin:.3rem 0"><b>Tipo:</b> ${p.tipo} | <b>Modalidade:</b> ${p.modalidade||'--'}</div><div class="status ${p.status==='pendente'?'pend':p.status==='aceito'?'aceito':'recusado'}">${p.status==='pendente'?'Pendente':p.status==='aceito'?'Aceito':'Recusado'}</div><div class="btn-row" style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="verContratoProposta('${p.id}')">Ver contrato</button></div>`;
+      boxEnviadas.appendChild(div);
+    }
+  } else {
+    boxEnviadas.innerHTML='<div class="empty">Você ainda não enviou propostas.</div>';
+  }
+}
+
+async function verContratoProposta(id){
+  const { data: p } = await sb.from('propostas').select('*').eq('id', id).single();
+  if(!p) return toast('Contrato não encontrado');
+  const modal=document.createElement('div');
+  modal.className='modal-overlay active';
+  modal.id='modal-contrato-proposta';
+  modal.innerHTML=`<div class="modal" style="max-height:80vh;overflow-y:auto"><div class="handle-bar"></div><h3>Contrato</h3><textarea style="width:100%;min-height:300px;font-family:monospace;font-size:.85rem" readonly>${p.contrato||'Sem contrato'}</textarea><div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="document.getElementById('modal-contrato-proposta').remove()">Fechar</button></div></div>`;
+  document.body.appendChild(modal);
+}
+
+async function aceitarProposta(id){
+  const { data: proposta } = await sb.from('propostas').select('*').eq('id', id).single();
+  if(!proposta) return;
+
+  // Update proposta status
+  await sb.from('propostas').update({ status: 'aceito' }).eq('id', id);
+
+  // Create vinculo
+  const { error } = await sb.from('vinculos').insert({
+    user1_id: proposta.de_id,
+    user2_id: proposta.para_id,
+    tipo: proposta.tipo,
+    modalidade: proposta.modalidade,
+    status: 'ativo',
+    proposto_por: proposta.de_id,
+    contrato: proposta.contrato,
+    desde: new Date().toISOString(),
+    created_at: new Date().toISOString()
+  });
+  if (error) return toast('Erro ao criar vínculo');
+
+  toast('Proposta aceita! Vínculo criado.');
+  loadInicio();
+}
+
+async function recusarProposta(id){
+  await sb.from('propostas').update({ status: 'recusado' }).eq('id', id);
+  toast('Proposta recusada.');
+  loadInicio();
+}
+
+async function sendProposta(){
+  const msg=document.getElementById('prop-msg').value.trim();
+  let tipo=document.getElementById('prop-tipo').value;
+  if(tipo==='outro'){ tipo=document.getElementById('prop-tipo-outro').value.trim(); if(!tipo) return toast('Digite o tipo de relacionamento'); }
+  let modalidade=document.getElementById('prop-modalidade').value;
+  if(modalidade==='outro'){ modalidade=document.getElementById('prop-modalidade-outro').value.trim(); if(!modalidade) return toast('Descreva a modalidade'); }
+
+  const email=document.getElementById('prop-email').value.trim().toLowerCase();
+  const texto=gerarContratoVinculo(tipo,modalidade);
+
+  if(!email){
+    // No email - generate generic invite
+    const codigo='CV-'+Date.now().toString(36).toUpperCase().slice(0,8);
+    await sb.from('convites').insert({
+      codigo, tipo: 'parceiro', grau: 'parceiro', email: null,
+      user_id: currentUser.id, tipo_relacionamento: tipo,
+      modalidade, mensagem: msg, contrato: texto, status: 'pendiente'
+    });
+    document.getElementById('prop-email').value=''; document.getElementById('prop-msg').value='';
+    const link=window.location.origin+window.location.pathname+'?convite='+codigo;
+    mostrarConviteParceiro(link,codigo);
+    return;
+  }
+
+  // Find user by email
+  const { data: paraPerfil } = await sb.from('perfis').select('*').eq('email', email).single();
+
+  if(!paraPerfil){
+    // Email but no account - save pending proposal
+    const codigo='CV-'+Date.now().toString(36).toUpperCase().slice(0,8);
+    await sb.from('convites').insert({
+      codigo, tipo: 'proposta', grau: 'parceiro', email,
+      user_id: currentUser.id, tipo_relacionamento: tipo,
+      modalidade, mensagem: msg, contrato: texto, status: 'pendiente'
+    });
+    document.getElementById('prop-email').value=''; document.getElementById('prop-msg').value='';
+    toast('Proposta enviada! Quando a pessoa criar conta, receberá a proposta.');
+    return;
+  }
+
+  // Has account - send proposal
+  await sb.from('propostas').insert({
+    de_id: currentUser.id,
+    para_id: paraPerfil.id,
+    tipo, modalidade,
+    mensagem: msg,
+    contrato: texto,
+    status: 'pendente'
+  });
+
+  document.getElementById('prop-email').value=''; document.getElementById('prop-msg').value='';
+  toast('Proposta com contrato enviada!');
+}
+
+function mostrarConviteParceiro(link,codigo){
+  const modal=document.createElement('div');
+  modal.className='modal-overlay active';
+  modal.id='modal-convite-parceiro';
+  modal.innerHTML='<div class="modal"><div class="handle-bar"></div><h3>Convite criado!</h3><p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">A pessoa não tem conta. Envie o link para ela criar e aceitar.</p><div class="field"><label>Código</label><input type="text" id="convite-codigo" value="'+codigo+'" readonly style="background:#f9fafb"></div><div class="field"><label>Link</label><input type="text" id="convite-link" value="'+link+'" readonly style="background:#f9fafb"></div><div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'modal-convite-parceiro\').remove()">Fechar</button><button class="btn btn-primary btn-sm" onclick="copiarConviteParceiro()">Copiar link</button></div></div>';
+  document.body.appendChild(modal);
+}
+
+function copiarConviteParceiro(){
+  const link=document.getElementById('convite-link').value;
+  navigator.clipboard.writeText(link).then(()=>toast('Link copiado!'));
+}
+
+function gerarContratoVinculo(tipo, modalidade) {
+  const data = new Date().toLocaleDateString('pt-BR');
+  const modalidadeTxt = modalidade === 'presencial' ? 'presencial' : modalidade === 'virtual' ? 'virtual' : 'misto';
+  return "CONTRATO DE " + tipo.toUpperCase() + "\n\nPelo presente instrumento particular, as partes abaixo qualificadas:\n\nCONTRATANTE 1: " + currentPerfil.nome + ", portador(a) do CPF nº " + currentPerfil.cpf + ", residente à " + (currentPerfil.endereco || '________') + ";\n\nCONTRATANTE 2: ________, portador(a) do CPF nº ________, residente à ________;\n\nCLÁUSULA PRIMEIRA - DO OBJETO\nO presente contrato tem por objetivo formalizar o relacionamento de " + tipo + " na modalidade " + modalidadeTxt + ", estabelecendo direitos e deveres mútuos.\n\nCLÁUSULA SEGUNDA - DOS DIREITOS\na) Fidelidade e lealdade mútua;\nb) Respeito e carinho recíproco;\nc) Comunicação honesta e empática;\nd) Apoio aos sonhos e objetivos mútuos.\n\nCLÁUSULA TERCEIRA - DOS DEVERES\na) Ser fiel e leal em todas as circunstâncias;\nb) Respeitar a individualidade e os limites do(a) parceiro(a);\nc) Resolver conflitos por meio do diálogo;\nd) Cuidar da saúde física e mental do(a) parceiro(a).\n\nCLÁUSULA QUARTA - DA VIGÊNCIA\nEste contrato entra em vigor na data de assinatura por ambas as partes.\n\nData: " + data + "\n\n_________________________________________\n" + currentPerfil.nome + "\n\n_________________________________________\nCONTRATANTE 2";
+}
+
+// ========== EVOLUIR / ENCERRAR ==========
+async function evoluirRelacionamento(){
+  if (!currentVinculo) return;
+  const modal=document.createElement('div');
+  modal.className='modal-overlay active';
+  modal.id='modal-evoluir';
+  let options='';
+  if(currentVinculo.tipo==='namoro'){ options='<option value="noivado">Noivado</option><option value="uniao-estavel">União Estável</option><option value="casamento">Casamento</option>'; }
+  else if(currentVinculo.tipo==='noivado'){ options='<option value="casamento">Casamento</option><option value="uniao-estavel">União Estável</option>'; }
+  else if(currentVinculo.tipo==='uniao-estavel'){ options='<option value="casamento">Casamento</option>'; }
+  else{ options='<option value="casamento">Casamento</option>'; }
+  modal.innerHTML='<div class="modal"><div class="handle-bar"></div><h3>Evoluir relacionamento</h3><p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">De: <b>'+currentVinculo.tipo+'</b></p><div class="field"><label>Para:</label><select id="evolucao-tipo">'+options+'</select></div><div class="field"><label>Data da evolução:</label><input type="date" id="evolucao-data" value="'+new Date().toISOString().split('T')[0]+'"></div><div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'modal-evoluir\').remove()">Cancelar</button><button class="btn btn-primary btn-sm" onclick="confirmarEvolucao()">Confirmar evolução</button></div></div>';
+  document.body.appendChild(modal);
+}
+
+async function confirmarEvolucao(){
+  const novoTipo=document.getElementById('evolucao-tipo').value;
+  const data=document.getElementById('evolucao-data').value;
+  await sb.from('vinculos').update({ tipo: novoTipo, evolucao: data }).eq('id', currentVinculo.id);
+  currentVinculo.tipo = novoTipo;
+  document.getElementById('modal-evoluir').remove();
+  toast('Relacionamento evoluído para '+novoTipo+'!');
+  loadInicio();
+}
+
+async function encerrarVinculo(){
+  if (!currentVinculo) return toast('Você não tem um vínculo ativo');
+  const modal=document.createElement('div');
+  modal.className='modal-overlay active';
+  modal.id='modal-encerrar';
+  modal.innerHTML='<div class="modal"><div class="handle-bar"></div><h3>Encerrar vínculo</h3><p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">Escolha como deseja encerrar:</p><div class="field"><label>Motivo:</label><select id="encerrar-motivo" onchange="mostrarQuebra()"><option value="">-- Selecione --</option><option value="mutuo">Mútuo acordo</option><option value="quebra">Quebra de contrato</option></select></div><div id="quebra-conteudo" style="display:none"><div class="field"><label>Descreva o motivo:</label><textarea id="encerrar-descricao" placeholder="Descreva..."></textarea></div></div><div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'modal-encerrar\').remove()">Cancelar</button><button class="btn btn-primary btn-sm" id="btn-confirmar-encerrar" onclick="confirmarEncerramento()" style="display:none">Enviar solicitação</button></div></div>';
+  document.body.appendChild(modal);
+}
+
+function mostrarQuebra(){
+  const motivo=document.getElementById('encerrar-motivo').value;
+  const conteudo=document.getElementById('quebra-conteudo');
+  const btnConfirmar=document.getElementById('btn-confirmar-encerrar');
+  if(motivo==='mutuo' || motivo==='quebra'){
+    conteudo.style.display='block';
+    btnConfirmar.style.display='flex';
+  } else {
+    conteudo.style.display='none';
+    btnConfirmar.style.display='none';
+  }
+}
+
+async function confirmarEncerramento(){
+  const motivo=document.getElementById('encerrar-motivo').value;
+  const descricao=document.getElementById('encerrar-descricao').value;
+  if(!motivo) return toast('Selecione o motivo');
+
+  const updateData = {
+    status: 'encerrado',
+    encerrado_em: new Date().toISOString(),
+    motivo: descricao || motivo
+  };
+
+  await sb.from('vinculos').update(updateData).eq('id', currentVinculo.id);
+  document.getElementById('modal-encerrar').remove();
+  toast('Vínculo encerrado.');
+  currentVinculo = null;
+  loadInicio();
+}
+
+// ========== PERFIL VIEW ==========
+function loadPerfilView(){
+  const ini=currentPerfil.nome.charAt(0).toUpperCase()||'?';
+  const av=document.getElementById('perfil-avatar');
+  if(currentPerfil.foto) av.innerHTML='<img src="'+currentPerfil.foto+'" alt="foto">'; else av.textContent=ini;
+  document.getElementById('perfil-nome').textContent=currentPerfil.nome;
+  document.getElementById('perfil-handle').textContent='@'+(currentPerfil.email?currentPerfil.email.split('@')[0]:currentPerfil.nome.toLowerCase().replace(/\s/g,''));
+  document.getElementById('perfil-nome2').textContent=currentPerfil.nome;
+  document.getElementById('perfil-cpf').textContent=currentPerfil.cpf||'--';
+  document.getElementById('perfil-rg').textContent=currentPerfil.rg||'--';
+  document.getElementById('perfil-genero').textContent=currentPerfil.genero==='masculino'?'Masculino':currentPerfil.genero==='feminino'?'Feminino':'--';
+  document.getElementById('perfil-email').textContent=currentPerfil.email||'--';
+  document.getElementById('perfil-telefone').textContent=currentPerfil.telefone||'--';
+  document.getElementById('perfil-nascimento').textContent=currentPerfil.nascimento?new Date(currentPerfil.nascimento).toLocaleDateString('pt-BR'):'--';
+  document.getElementById('perfil-nacionalidade').textContent=currentPerfil.nacionalidade||'--';
+  document.getElementById('perfil-naturalidade').textContent=currentPerfil.naturalidade||'--';
+  document.getElementById('perfil-profissao').textContent=currentPerfil.profissao||'--';
+  document.getElementById('perfil-estado-civil').textContent=currentPerfil.estado_civil||'--';
+  document.getElementById('perfil-mae').textContent=currentPerfil.mae||'--';
+  document.getElementById('perfil-pai').textContent=currentPerfil.pai||'--';
+  document.getElementById('perfil-endereco').textContent=currentPerfil.endereco||'--';
+}
+
+function fillEditForm(){
+  document.getElementById('edit-nome').value=currentPerfil.nome||'';
+  document.getElementById('edit-cpf').value=currentPerfil.cpf||'';
+  document.getElementById('edit-rg').value=currentPerfil.rg||'';
+  document.getElementById('edit-telefone').value=currentPerfil.telefone||'';
+  document.getElementById('edit-nascimento').value=currentPerfil.nascimento||'';
+  document.getElementById('edit-nacionalidade').value=currentPerfil.nacionalidade||'';
+  document.getElementById('edit-naturalidade').value=currentPerfil.naturalidade||'';
+  document.getElementById('edit-profissao').value=currentPerfil.profissao||'';
+  document.getElementById('edit-estado-civil').value=currentPerfil.estado_civil||'';
+  document.getElementById('edit-mae').value=currentPerfil.mae||'';
+  document.getElementById('edit-pai').value=currentPerfil.pai||'';
+  document.getElementById('edit-endereco').value=currentPerfil.endereco||'';
+}
+
+async function salvarPerfil(){
+  const updateData = {
+    nome: document.getElementById('edit-nome').value.trim() || currentPerfil.nome,
+    cpf: document.getElementById('edit-cpf').value.trim() || currentPerfil.cpf,
+    rg: document.getElementById('edit-rg').value.trim(),
+    telefone: document.getElementById('edit-telefone').value.trim(),
+    nascimento: document.getElementById('edit-nascimento').value || null,
+    nacionalidade: document.getElementById('edit-nacionalidade').value.trim(),
+    naturalidade: document.getElementById('edit-naturalidade').value.trim(),
+    profissao: document.getElementById('edit-profissao').value.trim(),
+    estado_civil: document.getElementById('edit-estado-civil').value,
+    mae: document.getElementById('edit-mae').value.trim(),
+    pai: document.getElementById('edit-pai').value.trim(),
+    endereco: document.getElementById('edit-endereco').value.trim()
+  };
+
+  const { error } = await sb.from('perfis').update(updateData).eq('id', currentUser.id);
+  if (error) return toast('Erro ao salvar');
+
+  currentPerfil = { ...currentPerfil, ...updateData };
+  closeModal('modal-editar-perfil');
+  toast('Dados atualizados!');
+  loadPerfilView();
+  loadInicio();
+}
+
+async function uploadFoto(input){
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const foto = e.target.result;
+    await sb.from('perfis').update({ foto }).eq('id', currentUser.id);
+    currentPerfil.foto = foto;
+    loadPerfilView();
+    loadInicio();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ========== PARENTES ==========
+async function loadParentes(){
+  const { data: parentes } = await sb.from('parentes').select('*').eq('casal_id', currentUser.id);
+  const box=document.getElementById('box-parentes');
+  if(parentes && parentes.length){
+    box.innerHTML='';
+    parentes.forEach(p=>{
+      const div=document.createElement('div'); div.className='proposta';
+      div.innerHTML='<div class="quem"><div class="av">'+p.nome.charAt(0).toUpperCase()+'</div><div class="nm">'+p.nome+'</div></div><div class="tx">Parentesco: '+p.grau+'</div>';
+      box.appendChild(div);
+    });
+  } else { box.innerHTML='<div class="empty">Nenhum parente cadastrado.</div>'; }
+}
+
+async function gerarConvite(){
+  let grau=document.getElementById('parente-grau').value;
+  if(grau==='outro'){ grau=document.getElementById('parente-grau-outro').value.trim(); if(!grau) return toast('Digite o parentesco'); }
+  const email=document.getElementById('parente-email').value.trim().toLowerCase();
+  const codigo='CV-'+Date.now().toString(36).toUpperCase().slice(0,8);
+
+  await sb.from('convites').insert({
+    codigo, grau, email: email || null,
+    user_id: currentUser.id, status: 'pendiente'
+  });
+
+  closeModal('modal-novo-parente');
+  document.getElementById('parente-email').value='';
+  document.getElementById('parente-grau-outro').value='';
+  document.getElementById('campo-parente-outro').style.display='none';
+  const link=window.location.origin+window.location.pathname+'?convite='+codigo;
+  mostrarConvite(link,codigo);
+}
+
+function mostrarConvite(link,codigo){
+  const modal=document.createElement('div');
+  modal.className='modal-overlay active';
+  modal.id='modal-convite-gerado';
+  modal.innerHTML='<div class="modal"><div class="handle-bar"></div><h3>Convite criado!</h3><p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">Copie o link ou código e envie para o parente.</p><div class="field"><label>Código do convite</label><input type="text" id="convite-codigo" value="'+codigo+'" readonly style="background:#f9fafb"></div><div class="field"><label>Link do convite</label><input type="text" id="convite-link" value="'+link+'" readonly style="background:#f9fafb"></div><div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'modal-convite-gerado\').remove()">Fechar</button><button class="btn btn-primary btn-sm" onclick="copiarConvite()">Copiar link</button></div></div>';
+  document.body.appendChild(modal);
+}
+
+function copiarConvite(){
+  const link=document.getElementById('convite-link').value;
+  navigator.clipboard.writeText(link).then(()=>toast('Link copiado!'));
+}
+
+// ========== DOCUMENTOS ==========
+async function loadContratos(){
+  const { data: docs } = await sb.from('contratos').select('*').eq('vinculo_id', currentVinculo?.id);
+  const { data: docsRecebidos } = await sb.from('documentos_recebidos').select('*').eq('user_id', currentUser.id);
+
+  const boxCriados=document.getElementById('box-contratos-criados');
+  if(docs && docs.length){ boxCriados.innerHTML=''; docs.forEach(d=>{ const div=document.createElement('div'); div.className='proposta'; div.innerHTML='<div class="quem"><div class="av">CT</div><div class="nm">'+d.titulo+'</div></div><span class="status '+(d.status==='assinado'?'aceito':'pend')+'">'+(d.status==='assinado'?'Assinado':'Pendente')+'</span><div class="btn-row" style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="verDocumento(\''+d.id+'\')">Ver</button></div>'; boxCriados.appendChild(div); }); } else { boxCriados.innerHTML='<div class="empty">Nenhum documento criado.</div>'; }
+
+  const boxRecebidos=document.getElementById('box-contratos-recebidos');
+  if(docsRecebidos && docsRecebidos.length){ boxRecebidos.innerHTML=''; docsRecebidos.forEach(d=>{ const div=document.createElement('div'); div.className='proposta'; div.innerHTML='<div class="quem"><div class="av">CT</div><div class="nm">'+d.titulo+'</div></div><span class="status '+(d.status==='assinado'?'aceito':'pend')+'">'+(d.status==='assinado'?'Assinado':'Pendente')+'</span><div class="btn-row" style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="verDocumento(\''+d.id+'\')">Ver</button>'+(d.status==='pendente'?'<button class="btn btn-primary btn-sm" onclick="assinarDocumento(\''+d.id+'\')">Assinar</button>':'')+'</div>'; boxRecebidos.appendChild(div); }); } else { boxRecebidos.innerHTML='<div class="empty">Nenhum documento recebido.</div>'; }
+
+  const docsAssinados = [...(docs?.filter(d=>d.status==='assinado')||[]), ...(docsRecebidos?.filter(d=>d.status==='assinado')||[])];
+  const boxAssinados=document.getElementById('box-contratos-assinados');
+  if(docsAssinados.length){ boxAssinados.innerHTML=''; docsAssinados.forEach(d=>{ const div=document.createElement('div'); div.className='proposta'; div.innerHTML='<div class="quem"><div class="av">OK</div><div class="nm">'+d.titulo+'</div></div><span class="status aceito">Assinado</span><div class="btn-row" style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="verDocumento(\''+d.id+'\')">Ver</button></div>'; boxAssinados.appendChild(div); }); } else { boxAssinados.innerHTML='<div class="empty">Nenhum documento assinado.</div>'; }
+}
+
+async function verDocumento(id){
+  const { data: doc } = await sb.from('contratos').select('*').eq('id', id).single();
+  if(!doc) return;
+  const modal=document.createElement('div');
+  modal.className='modal-overlay active';
+  modal.id='modal-ver-documento';
+  modal.innerHTML='<div class="modal"><div class="handle-bar"></div><h3>'+doc.titulo+'</h3><div class="contrato-preview" style="max-height:40vh">'+doc.texto+'</div><div class="btn-row" style="margin-top:1rem"><button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'modal-ver-documento\').remove()">Fechar</button></div></div>';
+  document.body.appendChild(modal);
+}
+
+async function assinarDocumento(id){
+  await sb.from('documentos_recebidos').update({ status: 'assinado' }).eq('id', id);
+  await sb.from('contratos').update({ status: 'assinado' }).eq('id', id);
+  toast('Documento assinado!');
+  loadContratos();
+}
+
+function switchDocTab(t){
+  const b=document.querySelectorAll('#modal-novo-contrato .tabs button');
+  b.forEach(x=>x.classList.remove('active'));
+  if(t==='contrato'){b[0].classList.add('active');document.getElementById('tab-doc-contrato').style.display='block';document.getElementById('tab-doc-declaracao').style.display='none';document.getElementById('tab-doc-certificado').style.display='none';document.getElementById('tab-doc-regras').style.display='none';}
+  else if(t==='declaracao'){b[1].classList.add('active');document.getElementById('tab-doc-contrato').style.display='none';document.getElementById('tab-doc-declaracao').style.display='block';document.getElementById('tab-doc-certificado').style.display='none';document.getElementById('tab-doc-regras').style.display='none';}
+  else if(t==='certificado'){b[2].classList.add('active');document.getElementById('tab-doc-contrato').style.display='none';document.getElementById('tab-doc-declaracao').style.display='none';document.getElementById('tab-doc-certificado').style.display='block';document.getElementById('tab-doc-regras').style.display='none';}
+  else{b[3].classList.add('active');document.getElementById('tab-doc-contrato').style.display='none';document.getElementById('tab-doc-declaracao').style.display='none';document.getElementById('tab-doc-certificado').style.display='none';document.getElementById('tab-doc-regras').style.display='block';}
+  fillDocParceiros();
+}
+
+function fillDocParceiros(){
+  if (!currentVinculo) return;
+  const parceiroId = currentVinculo.user1_id === currentUser.id ? currentVinculo.user2_id : currentVinculo.user1_id;
+  loadPerfilById(parceiroId).then(p=>{
+    let options='<option value="">-- Selecione --</option>';
+    if(p) options+='<option value="'+p.id+'">'+p.nome+'</option>';
+    document.getElementById('doc-parceiro').innerHTML=options;
+    document.getElementById('dec-parceiro').innerHTML=options;
+    document.getElementById('regras-parceiro').innerHTML=options;
+  });
+  // Load parentes for testemunhas
+  sb.from('parentes').select('*').eq('casal_id', currentUser.id).then(({data: parentes})=>{
+    let testOptions='';
+    if(parentes) parentes.forEach(p=>{ testOptions+='<option value="'+p.id+'">'+p.nome+' ('+p.grau+')</option>'; });
+    document.getElementById('doc-testemunhas').innerHTML=testOptions;
+  });
+}
+
+function updateDocModelos(){
+  const tipo=document.getElementById('doc-tipo').value;
+  const select=document.getElementById('doc-modelo');
+  select.innerHTML='<option value="">-- Selecione --</option>';
+  if(tipo==='namoro'){ select.innerHTML+='<option value="namoro-simples">Contrato de Namoro Simples</option><option value="namoro-qualificado">Contrato de Namoro Qualificado</option><option value="namoro-patrimonial">Contrato de Namoro com Plano Patrimonial</option>'; }
+  else if(tipo==='noivado'){ select.innerHTML+='<option value="noivado-simples">Contrato de Noivado</option><option value="noivado-patrimonial">Contrato de Noivado com Cláusulas Patrimoniais</option>'; }
+  else if(tipo==='casamento'){ select.innerHTML+='<option value="casamento-pacto">Pacto Antenupcial</option><option value="casamento-regime">Contrato de Regime de Bens</option>'; }
+  else if(tipo==='uniao-estavel'){ select.innerHTML+='<option value="uniao-comunhao">União Estável - Comunhão Parcial</option><option value="uniao-separacao">União Estável - Separação Total</option><option value="uniao-universal">União Estável - Comunhão Universal</option>'; }
+}
+
+function updateDecModelos(){
+  const tipo=document.getElementById('dec-tipo').value;
+  const select=document.getElementById('dec-modelo');
+  select.innerHTML='<option value="">-- Selecione --</option>';
+  if(tipo==='namoro'){ select.innerHTML+='<option value="dec-namoro">Declaração de Namoro</option>'; }
+  else if(tipo==='noivado'){ select.innerHTML+='<option value="dec-noivado">Declaração de Noivado</option>'; }
+  else if(tipo==='casamento'){ select.innerHTML+='<option value="dec-casamento">Declaração de Casamento</option>'; }
+  else if(tipo==='uniao-estavel'){ select.innerHTML+='<option value="dec-uniao">Declaração de União Estável</option>'; }
+}
+
+function updateCertModelos(){
+  const tipo=document.getElementById('cert-tipo').value;
+  const select=document.getElementById('cert-modelo');
+  select.innerHTML='<option value="">-- Selecione --</option>';
+  if(tipo==='namoro'){ select.innerHTML+='<option value="cert-namoro">Certificado de Namoro</option>'; }
+  else if(tipo==='noivado'){ select.innerHTML+='<option value="cert-noivado">Certificado de Noivado</option>'; }
+  else if(tipo==='casamento'){ select.innerHTML+='<option value="cert-casamento">Certificado de Casamento</option>'; }
+  else if(tipo==='uniao-estavel'){ select.innerHTML+='<option value="cert-uniao">Certificado de União Estável</option>'; }
+}
+
+async function enviarDocumento(){
+  const tipo=document.getElementById('doc-tipo').value;
+  const modelo=document.getElementById('doc-modelo').value;
+  const parceiroId=document.getElementById('doc-parceiro').value;
+  const testemunhasSel=Array.from(document.getElementById('doc-testemunhas').selectedOptions).map(o=>o.value);
+  if(!tipo||!modelo) return toast('Selecione o tipo e modelo');
+  if(!parceiroId) return toast('Selecione o(a) parceiro(a)');
+
+  const texto=gerarDocumento(tipo,modelo,testemunhasSel);
+  const titulo=getDocTitulo(tipo,modelo);
+
+  // Insert contrato
+  const { data: contrato, error } = await sb.from('contratos').insert({
+    vinculo_id: currentVinculo.id,
+    titulo,
+    texto,
+    status: 'criado'
+  }).select().single();
+  if (error) return toast('Erro ao criar documento');
+
+  // Insert into documentos_recebidos for partner
+  await sb.from('documentos_recebidos').insert({
+    contrato_id: contrato.id,
+    user_id: parceiroId,
+    status: 'pendente'
+  });
+
+  closeModal('modal-novo-contrato');
+  toast('Documento enviado!');
+  loadContratos();
+}
+
+function gerarDocumento(tipo,modelo,testemunhas){
+  const data=new Date().toLocaleDateString('pt-BR');
+  if(modelo==='namoro-simples'){
+    return `CONTRATO DE NAMORO\n\nPelo presente instrumento particular de Contrato de Namoro, que entre si fazem:\n\nCONTRATANTE 1: ${currentPerfil.nome}, ${currentPerfil.estado_civil||'solteiro(a)'}, ${currentPerfil.profissao||'________'}, portador(a) do RG nº ${currentPerfil.rg||'________'} e inscrito(a) no CPF sob nº ${currentPerfil.cpf}, residente e domiciliado(a) à ${currentPerfil.endereco||'________'};\n\nCONTRATANTE 2: ________\n\nCLÁUSULA PRIMEIRA - DO OBJETO\nOs contratantes declaram que possuem um relacionamento afetivo, denominado "NAMORO".\n\nData: ${data}\n\n_________________________________________\n${currentPerfil.nome}\nCONTRATANTE 1`;
+  }
+  return 'Documento gerado com sucesso.';
+}
+
+function getDocTitulo(tipo,modelo){
+  const titulos={'namoro-simples':'Contrato de Namoro','namoro-qualificado':'Contrato de Namoro Qualificado','namoro-patrimonial':'Contrato de Namoro com Plano Patrimonial','noivado-simples':'Contrato de Noivado','noivado-patrimonial':'Contrato de Noivado com Cláusulas Patrimoniais','casamento-pacto':'Pacto Antenupcial','casamento-regime':'Contrato de Regime de Bens','uniao-comunhao':'União Estável - Comunhão Parcial','uniao-separacao':'União Estável - Separação Total','uniao-universal':'União Estável - Comunhão Universal'};
+  return titulos[modelo]||'Documento';
+}
+
+function enviarDeclaracao(){ toast('Declaração enviada!'); closeModal('modal-novo-contrato'); }
+function gerarCertificado(){ toast('Certificado gerado!'); closeModal('modal-novo-contrato'); }
+function enviarRegras(){ toast('Regras enviadas!'); closeModal('modal-novo-contrato'); }
+
+// ========== ADMIN ==========
+async function loadAdmin(){
+  // Load stats
+  const { data: users } = await sb.from('perfis').select('id, nome, email, cpf, created_at');
+  const { data: vinculos } = await sb.from('vinculos').select('id, user1_id, user2_id, tipo, status, desde');
+  const { data: propostas } = await sb.from('propostas').select('id, de_id, para_id, tipo, status, created_at');
+
+  document.getElementById('admin-total-users').textContent = users?.length || 0;
+  document.getElementById('admin-total-vinculos').textContent = vinculos?.filter(v => v.status === 'ativo').length || 0;
+  document.getElementById('admin-total-propostas').textContent = propostas?.filter(p => p.status === 'pendente').length || 0;
+
+  // Render users
+  const boxUsers = document.getElementById('admin-lista-users');
+  if (users && users.length) {
+    boxUsers.innerHTML = '';
+    users.forEach(u => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:800;font-size:.9rem">${u.nome}</div>
+          <div style="font-size:.8rem;color:#666">${u.email}</div>
+          <div style="font-size:.75rem;color:#999">CPF: ${u.cpf || '--'}</div>
+        </div>
+        <span class="badge ok">${u.created_at ? new Date(u.created_at).toLocaleDateString('pt-BR') : '--'}</span>
+      </div>`;
+      boxUsers.appendChild(div);
+    });
+  } else {
+    boxUsers.innerHTML = '<div class="empty">Nenhum usuário cadastrado.</div>';
+  }
+
+  // Render vinculos
+  const boxVinculos = document.getElementById('admin-lista-vinculos');
+  if (vinculos && vinculos.length) {
+    boxVinculos.innerHTML = '';
+    vinculos.forEach(v => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:800;font-size:.9rem">${v.tipo}</div>
+          <div style="font-size:.8rem;color:#666">${v.status}</div>
+        </div>
+        <span class="badge ${v.status === 'ativo' ? 'ok' : 'no'}">${v.status}</span>
+      </div>`;
+      boxVinculos.appendChild(div);
+    });
+  } else {
+    boxVinculos.innerHTML = '<div class="empty">Nenhum vínculo.</div>';
+  }
+
+  // Render propostas
+  const boxPropostas = document.getElementById('admin-lista-propostas');
+  if (propostas && propostas.length) {
+    boxPropostas.innerHTML = '';
+    propostas.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:800;font-size:.9rem">${p.tipo}</div>
+          <div style="font-size:.8rem;color:#666">${p.status}</div>
+        </div>
+        <span class="badge ${p.status === 'pendente' ? 'pend' : p.status === 'aceito' ? 'ok' : 'no'}">${p.status}</span>
+      </div>`;
+      boxPropostas.appendChild(div);
+    });
+  } else {
+    boxPropostas.innerHTML = '<div class="empty">Nenhuma proposta.</div>';
+  }
+}
+
+</script>
+</body>
+</html>
