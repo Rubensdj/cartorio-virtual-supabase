@@ -9,31 +9,32 @@
 <script src="supabase-umd.js"></script>
 <script src="contratos.js"></script>
 <style>
+/* ===== PRISMATIC TOKENS ===== */
 :root {
-  --bg: #fafaf9;
-  --surface: #ffffff;
-  --ink: #18181b;
-  --ink-soft: #3f3f46;
-  --muted: #a1a1aa;
+  --bg: #0a0a0a;
+  --bg-gradient: linear-gradient(180deg, #050505 0%, #0a0a0a 50%, #050505 100%);
+  --surface: rgba(255,255,255,0.03);
+  --surface-hover: rgba(255,255,255,0.08);
+  --surface-border: rgba(255,255,255,0.08);
   --accent: #b91c1c;
   --accent-dark: #991b1b;
-  --accent-light: #fecaca;
   --gold: #d97706;
   --gold-light: #fef3c7;
-  --ok: #15803d;
-  --ok-light: #dcfce7;
-  --line: #e7e5e4;
-  --line-dark: #d6d3d1;
+  --ink: #f0f0f0;
+  --ink-soft: #a0a0a0;
+  --muted: #888;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+  --shadow-xl: 0 24px 64px rgba(0,0,0,0.12);
+  --shadow-accent: 0 8px 32px rgba(185,28,28,0.25);
   --radius: 16px;
   --radius-lg: 24px;
   --radius-xl: 32px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow: 0 4px 16px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
-  --shadow-xl: 0 24px 64px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.06);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bouncy: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   --font: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: "Playfair Display", Georgia, serif;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -47,1826 +48,1021 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   line-height: 1.6;
+  background: var(--bg-gradient);
 }
 
-/* ===== ANIMATIONS ===== */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+/* ===== APP FRAME ===== */
+.app-frame {
+  max-width: 440px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  padding-bottom: 72px;
+  border-left: 1px solid var(--surface-border);
+  border-right: 1px solid var(--surface-border);
+  background: radial-gradient(circle at top, rgba(185,28,28,0.03) 0%, transparent 50%);
 }
 
-.screen { display: none; animation: fadeInUp 0.5s ease forwards; }
-.screen.active { display: block; }
+/* ===== STATUS BAR ===== */
+.status-bar {
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted);
+}
 
-/* ===== TOPBAR ===== */
-.topbar {
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(185,28,28,0.5);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(185,28,28,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(185,28,28,0); }
+}
+
+/* ===== APP HEADER ===== */
+.app-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: sticky;
   top: 0;
-  z-index: 100;
-  background: rgba(250, 250, 249, 0.85);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(231, 229, 228, 0.6);
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  animation: slideDown 0.4s ease;
-}
-.topbar .brand {
-  font-weight: 800;
-  font-size: 1.25rem;
-  letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.topbar .brand-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 0.75rem;
-  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
-}
-.topbar .brand-icon svg { width: 20px; height: 20px; color: white; }
-.topbar .actions { display: flex; gap: 0.5rem; }
-.topbar .icon-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--ink-soft);
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-}
-.topbar .icon-btn:hover {
-  background: var(--accent-light);
-  border-color: var(--accent);
-  color: var(--accent);
-  transform: translateY(-1px);
+  background: rgba(10,10,10,0.8);
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--surface-border);
+  z-index: 20;
 }
 
-/* ===== LAYOUT ===== */
-.wrap {
-  padding: 1.5rem;
-  max-width: 520px;
-  margin: 0 auto;
-  padding-bottom: 7rem;
+.app-header .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-header .logo-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 4px 16px rgba(185,28,28,0.3);
+}
+
+.app-header .logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.app-header .actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-header .avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-bouncy);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-header .avatar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  background-size: 200% 200%;
+  animation: shimmer 3s infinite;
+  z-index: -1;
+}
+
+.app-header .avatar:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 0 25px rgba(185,28,28,0.4);
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0 0; }
+  50% { background-position: 100% 100%; }
 }
 
 /* ===== HERO ===== */
-.hero {
+.hero-section {
+  padding: 32px 20px 24px;
   text-align: center;
-  padding: 3rem 0 2rem;
+  position: relative;
 }
-.hero .logo {
-  width: 88px;
-  height: 88px;
+
+.hero-section .hero-icon {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
   border-radius: 28px;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 50%, var(--gold) 100%);
+  background: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.5rem;
-  box-shadow: 0 16px 40px rgba(185, 28, 28, 0.25), 0 4px 12px rgba(185, 28, 28, 0.15);
-  animation: float 6s ease-in-out infinite;
-}
-.hero .logo svg { width: 44px; height: 44px; color: white; }
-.hero h1 {
-  font-family: var(--font-display);
-  font-size: 2.5rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  margin-bottom: 0.75rem;
-  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero h1 span {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero p {
-  color: var(--muted);
-  font-size: 1.05rem;
-  line-height: 1.7;
-  max-width: 360px;
-  margin: 0 auto;
+  font-size: 42px;
+  box-shadow: 
+    0 20px 60px rgba(185,28,28,0.3),
+    0 0 0 8px rgba(255,255,255,0.1);
+  animation: float 3s ease-in-out infinite;
 }
 
-/* ===== CARDS ===== */
-.card {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
-  transition: var(--transition);
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
-.card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-.card-elevated {
-  box-shadow: var(--shadow-lg);
-  border: none;
-  background: linear-gradient(135deg, var(--surface) 0%, #fefefe 100%);
-}
-.card-accent {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-  color: white;
-  border: none;
-  box-shadow: 0 12px 40px rgba(185, 28, 28, 0.3);
-}
-.card-accent h3 { color: white; }
-.card-accent p { color: rgba(255,255,255,0.9); }
-.card h3 {
-  font-size: 1.15rem;
+
+.hero-section h1 {
+  font-size: 28px;
   font-weight: 800;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
-}
-.card p {
-  color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.65;
+  font-family: var(--font-display);
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* ===== TABS ===== */
-.tabs {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  background: var(--line);
-  padding: 4px;
-  border-radius: 14px;
-}
-.tabs button {
-  flex: 1;
-  padding: 0.75rem;
-  border-radius: 10px;
-  border: none;
-  background: transparent;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
+.hero-section p {
   color: var(--muted);
-  font-family: inherit;
-  transition: var(--transition);
-}
-.tabs button.active {
-  background: var(--surface);
-  color: var(--ink);
-  box-shadow: var(--shadow-sm);
-}
-
-/* ===== FIELDS ===== */
-.field { margin-bottom: 1.25rem; }
-.field label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--ink-soft);
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
-}
-.field input,
-.field textarea,
-.field select {
-  width: 100%;
-  padding: 1rem 1.1rem;
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  font-size: 1rem;
-  font-family: inherit;
-  background: var(--surface);
-  color: var(--ink);
-  transition: var(--transition);
-  appearance: none;
-  -webkit-appearance: none;
-}
-.field input:focus,
-.field textarea:focus,
-.field select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-light);
-}
-.field textarea { min-height: 100px; resize: vertical; }
-.field select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
+  font-size: 14px;
+  margin-bottom: 24px;
 }
 
 /* ===== BUTTONS ===== */
 .btn {
-  width: 100%;
-  padding: 1.1rem;
-  border: none;
-  border-radius: 14px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  font-family: inherit;
+  gap: 8px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
   transition: var(--transition);
-  letter-spacing: -0.01em;
+  padding: 14px 24px;
+  width: 100%;
 }
-.btn:active { transform: scale(0.97); }
+
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   color: white;
-  box-shadow: 0 8px 24px rgba(185, 28, 28, 0.3);
+  box-shadow: var(--shadow-accent);
+  border: none;
 }
+
 .btn-primary:hover {
-  box-shadow: 0 12px 32px rgba(185, 28, 28, 0.4);
   transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(185,28,28,0.3);
 }
-.btn-outline {
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--surface-border);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.btn-ghost {
   background: transparent;
   color: var(--accent);
-  border: 2px solid var(--accent);
-  box-shadow: none;
+  border: 1px solid var(--accent);
 }
-.btn-outline:hover { background: var(--accent-light); }
-.btn-ghost {
-  background: var(--line);
-  color: var(--ink-soft);
-  box-shadow: none;
-}
-.btn-ghost:hover { background: var(--line-dark); }
-.btn-gold {
-  background: linear-gradient(135deg, var(--gold) 0%, #b45309 100%);
-  color: white;
-  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.3);
-}
-.btn-gold:hover {
-  box-shadow: 0 12px 32px rgba(217, 119, 6, 0.4);
-  transform: translateY(-2px);
-}
-.btn-sm { padding: 0.75rem 1.25rem; font-size: 0.9rem; border-radius: 10px; }
-.btn-row { display: flex; gap: 0.75rem; }
-.btn-row > * { flex: 1; }
 
-/* ===== SECTION LABEL ===== */
-.section-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--accent);
-  font-weight: 800;
-  margin: 2rem 0 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.section-label::before {
-  content: "";
-  width: 18px;
-  height: 2px;
-  border-radius: 2px;
+.btn-ghost:hover {
   background: var(--accent);
+  color: var(--bg);
 }
 
-/* ===== AVATAR ===== */
-.avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 800;
-  font-size: 1.25rem;
-  flex-shrink: 0;
-  box-shadow: var(--shadow);
+/* ===== CARTÃO DE RELACIONAMENTO ===== */
+.cartao-container {
+  padding: 24px 20px;
 }
-.avatar-lg {
-  width: 100px;
-  height: 100px;
-  font-size: 2.25rem;
-  border: 4px solid white;
-  box-shadow: var(--shadow-lg);
-}
-.avatar-xl {
-  width: 130px;
-  height: 130px;
-  font-size: 3rem;
-  border: 5px solid white;
-  box-shadow: var(--shadow-xl);
-}
-.avatar-ring {
+
+.cartao-wrapper {
   position: relative;
-  display: inline-block;
-}
-.avatar-ring::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 3px solid var(--accent);
-  opacity: 0.3;
+  max-width: 360px;
+  margin: 0 auto;
 }
 
-/* ===== PROFILE HEADER ===== */
-.profile-header {
-  text-align: center;
-  padding: 2rem 0;
-}
-.profile-header .avatar-xl {
-  margin: 0 auto 1.25rem;
-}
-.profile-header .name {
-  font-size: 1.6rem;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-}
-.profile-header .handle {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-top: 0.25rem;
-}
-
-/* ===== STATS ===== */
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-  margin: 1.5rem 0;
-}
-.stat {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 1.25rem 0.75rem;
-  text-align: center;
-  box-shadow: var(--shadow-sm);
+.cartao-relacionamento {
+  background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  border: 1px solid var(--surface-border);
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
   transition: var(--transition);
 }
-.stat:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
-.stat .n {
-  font-size: 1.75rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1;
-}
-.stat .l {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--muted);
-  font-weight: 700;
-  margin-top: 0.4rem;
+
+.cartao-relacionamento:hover {
+  box-shadow: 
+    0 30px 80px rgba(0,0,0,0.6),
+    inplace 0 0 0 0 rgba(255,255,255,0.05);
+  transform: translateY(-5px);
 }
 
-/* ===== LIST ROW ===== */
-.list-row {
+.cartao-relacionamento::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+}
+
+.cartao-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px 14px;
+}
+
+.cartao-logo {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--line);
+  gap: 10px;
 }
-.list-row:last-child { border-bottom: none; }
-.list-row .k { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
-.list-row .v { font-weight: 800; font-size: 0.95rem; text-align: right; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* ===== PROPOSTA / DOCUMENT CARD ===== */
-.proposta {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+.cartao-logo .logo-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 16px rgba(185,28,28,0.3);
 }
-.proposta:hover { box-shadow: var(--shadow); }
-.proposta .quem { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
-.proposta .quem .av {
-  width: 42px; height: 42px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%);
-  display: flex; align-items: center; justify-content: center;
-  color: white; font-weight: 800; font-size: 1rem;
-}
-.proposta .quem .nm { font-weight: 800; font-size: 1rem; }
-.proposta .tx { color: var(--muted); font-style: italic; font-size: 0.9rem; margin: 0.5rem 0 0.75rem; line-height: 1.5; }
-.proposta .status {
-  display: inline-block;
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.7rem;
+
+.cartao-logo-text {
+  font-size: 15px;
   font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--ink);
+}
+
+.cartao-level {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 20px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-.proposta .status.pend { background: #fef3cd; color: #856404; }
-.proposta .status.aceito { background: var(--ok-light); color: var(--ok); }
-.proposta .status.recusado { background: #fee2e2; color: var(--accent); }
-
-/* ===== BADGES ===== */
-.badge {
-  display: inline-block;
-  padding: 0.35rem 0.9rem;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-.badge.ok { background: var(--ok-light); color: var(--ok); }
-.badge.no { background: #fee2e2; color: var(--accent); }
-.badge.gold { background: var(--gold-light); color: var(--gold); }
-
-/* ===== TOAST ===== */
-.toast {
-  position: fixed;
-  top: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--ink);
-  color: white;
-  padding: 0.9rem 1.5rem;
-  border-radius: 14px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  z-index: 1000;
-  max-width: 90%;
-  text-align: center;
-  box-shadow: var(--shadow-xl);
-  animation: slideDown 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
-/* ===== MODAL ===== */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 200;
-  display: none;
-  align-items: flex-end;
+.level-namoro { 
+  background: rgba(255,107,159,0.15); 
+  color: #ff6b9d; 
+  border: 1px solid rgba(255,107,159,0.3); 
+}
+.level-noivado { 
+  background: rgba(217,119,6,0.15); 
+  color: var(--gold); 
+  border: 1px solid rgba(217,119,6,0.3); 
+}
+.level-casamento { 
+  background: rgba(221,160,221,0.15); 
+  color: #dda0dd; 
+  border: 1px solid rgba(221,160,221,0.3); 
+}
+.level-uniao { 
+  background: rgba(144,238,144,0.15); 
+  color: #90ee90; 
+  border: 1px solid rgba(144,238,144,0.3); 
+}
+
+.cartao-body {
+  flex: 1;
+  padding: 0 22px;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  animation: fadeIn 0.2s ease;
+  gap: 24px;
 }
-.modal-overlay.active { display: flex; }
-.modal {
-  background: var(--surface);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  padding: 2rem 1.5rem;
-  width: 100%;
-  max-width: 520px;
-  max-height: 92vh;
-  overflow-y: auto;
-  animation: scaleIn 0.3s ease;
+
+.cartao-names {
+  text-align: center;
 }
-.modal h3 {
-  font-size: 1.35rem;
+
+.cartao-names .nome-principal {
+  font-size: 28px;
   font-weight: 800;
-  margin-bottom: 1.25rem;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  color: var(--ink);
+  margin-bottom: 8px;
 }
-.modal .handle-bar {
-  width: 40px;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--line-dark);
-  margin: 0 auto 1.5rem;
+
+.cartao-names .coracao-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 14px 0;
+}
+
+.cartao-names .coracao {
+  color: var(--accent);
+  font-size: 22px;
+  animation: heartbeat 1.5s ease infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+.cartao-names .nome-parceiro {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.cartao-data {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.cartao-qr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 12px 0;
+}
+
+.cartao-qr .qr-code {
+  width: 76px;
+  height: 76px;
+  background: #fff;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.cartao-qr .qr-code::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 2px solid var(--surface-border);
+  border-radius: 10px;
+}
+
+.cartao-qr .qr-code::after {
+  content: 'QR';
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  z-index: 1;
+}
+
+.cartao-qr .qr-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cartao-qr .qr-info .qr-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.cartao-qr .qr-info .qr-desc {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: 'Courier New', monospace;
+}
+
+.cartao-footer {
+  padding: 20px 22px;
+  border-top: 1px solid var(--surface-border);
+  text-align: center;
+}
+
+.cartao-footer .motd {
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+  font-family: var(--font-display);
+}
+
+.cartao-badges {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.cartao-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border: 1px solid var(--surface-border);
+}
+
+/* ===== ACTIONS ===== */
+.cartao-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cartao-actions button {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition-bouncy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.action-preview {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--surface-border);
+}
+
+.action-preview:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+  transform: scale(1.05);
+}
+
+.action-download {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: white;
+  border: none;
+}
+
+.action-download:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-accent);
 }
 
 /* ===== BOTTOM NAV ===== */
 .bottom-nav {
   position: fixed;
+  bottom: 20px;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: rgba(255,255,255,0.9);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-top: 1px solid rgba(231, 229, 228, 0.6);
+  margin: 0 auto;
+  max-width: 440px;
+  background: rgba(10,10,10,0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--surface-border);
+  border-radius: 32px;
+  padding: 8px;
   display: flex;
-  z-index: 100;
-  padding: 0.5rem 0;
-  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  justify-content: space-around;
+  z-index: 30;
+  box-shadow: 
+    0 8px 32px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.06);
 }
+
 .bottom-nav button {
   flex: 1;
   background: none;
   border: none;
+  color: var(--muted);
+  padding: 10px 4px;
+  font-size: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.2rem;
-  padding: 0.4rem 0;
   cursor: pointer;
-  color: var(--muted);
-  font-size: 0.65rem;
-  font-weight: 700;
-  font-family: inherit;
-  transition: var(--transition);
-}
-.bottom-nav button .ic {
-  width: 28px;
-  height: 28px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-}
-.bottom-nav button.active { color: var(--accent); }
-.bottom-nav button.active .ic {
-  background: var(--accent-light);
-}
-.bottom-nav button.active::after {
-  content: "";
-  width: 24px;
-  height: 3px;
-  border-radius: 3px;
-  background: var(--accent);
-  margin-top: 0.1rem;
+  transition: var(--transition-fast);
+  border-radius: 16px;
 }
 
-/* ===== EMPTY STATE ===== */
-.empty {
-  text-align: center;
-  color: var(--muted);
-  padding: 3rem 1.5rem;
-  font-size: 0.95rem;
+.bottom-nav button.active,
+.bottom-nav button:hover {
+  color: var(--accent);
+  background: rgba(185,28,28,0.15);
 }
-.empty-icon {
-  width: 64px;
-  height: 64px;
+
+.bottom-nav button.active .indicator,
+.bottom-nav button:hover .indicator {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.bottom-nav .nav-icon {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+.bottom-nav .indicator {
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
-  background: var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
-  opacity: 0.6;
+  background: var(--accent);
+  opacity: 0;
+  transform: scale(0);
+  transition: var(--transition-fast);
 }
 
-/* ===== RING / ANIMATION ===== */
-.ring-wrap { position: relative; display: inline-block; }
-.ring-num {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-.ring-num small { display: block; font-size: 0.65rem; color: var(--muted); font-weight: 600; }
-
-/* ===== CONTRATO PREVIEW ===== */
-.contrato-preview {
-  background: var(--surface);
-  border: 2px solid var(--line);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  font-family: 'Courier New', monospace;
-  font-size: 0.8rem;
-  line-height: 1.8;
-  color: var(--ink-soft);
-  white-space: pre-wrap;
-  max-height: 320px;
-  overflow-y: auto;
-  box-shadow: var(--shadow-sm);
-}
-.contrato-preview::-webkit-scrollbar { width: 6px; }
-.contrato-preview::-webkit-scrollbar-track { background: transparent; }
-.contrato-preview::-webkit-scrollbar-thumb { background: var(--line-dark); border-radius: 3px; }
-
-/* ===== DOC TYPE GRID ===== */
-.doc-type-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-.doc-type-card {
-  padding: 1.25rem;
-  border-radius: var(--radius);
-  border: 2px solid var(--line);
-  background: var(--surface);
-  cursor: pointer;
-  transition: var(--transition);
-  text-align: center;
-}
-.doc-type-card:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-.doc-type-card.selected {
-  border-color: var(--accent);
-  background: var(--accent-light);
-}
-.doc-type-card .icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 0.75rem;
-  transition: var(--transition);
-}
-.doc-type-card.selected .icon { background: var(--accent); color: white; }
-.doc-type-card .name { font-weight: 700; font-size: 0.85rem; }
-
-/* ===== FOTO UPLOAD ===== */
-.foto-upload { position: relative; display: inline-block; cursor: pointer; }
-.foto-upload .edit-foto {
-  position: absolute;
-  bottom: 0;
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
   right: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--accent);
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(16px);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  border: 3px solid white;
-  box-shadow: var(--shadow);
+  align-items: flex-end;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
 }
 
-/* ===== CHECKBOX ===== */
-input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--accent);
-  border-radius: 6px;
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background: var(--bg);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 24px 20px 16px;
+  width: 100%;
+  max-width: 440px;
+  animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-xl);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--surface-border);
+  border-radius: 2px;
+  margin: 8px auto 20px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.modal-header .close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: none;
+  color: var(--muted);
+  font-size: 18px;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.modal-header .close-btn:hover {
+  background: var(--surface-hover);
+  color: var(--ink);
+  transform: rotate(90deg);
+}
+
+.form-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-size: 16px;
+  font-family: var(--font);
+  transition: var(--transition-normal);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.03);
+  box-shadow: 0 0 0 3px rgba(185,28,28,0.1);
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 160px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,15,15,0.9);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  backdrop-filter: blur(20px);
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  pointer-events: all;
 }
 
 /* ===== RESPONSIVE ===== */
-@media (min-width: 768px) {
-  .wrap { max-width: 600px; }
-  .hero h1 { font-size: 3rem; }
+@media (max-width: 480px) {
+  .app-frame {
+    border: none;
+    border-radius: 0;
+    max-width: 100%;
+  }
+  
+  .hero-section .hero-icon {
+    width: 80px;
+    height: 80px;
+    font-size: 36px;
+  }
+  
+  .cartao-relacionamento {
+    min-height: 460px;
+  }
+  
+  .bottom-nav {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    border-radius: 24px 24px 0 0;
+  }
 }
-
-/* ===== UTILITY ===== */
-.text-center { text-align: center; }
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mb-1 { margin-bottom: 0.5rem; }
-.mb-2 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 1.5rem; }
-.flex { display: flex; }
-.items-center { align-items: center; }
-.justify-between { justify-content: space-between; }
-.gap-1 { gap: 0.5rem; }
-.gap-2 { gap: 1rem; }
 </style>
 </head>
 <body>
-
-<!-- ===== WELCOME SCREEN ===== -->
-<div class="screen active" id="screen-welcome">
-  <div class="wrap" style="max-width:480px">
-    <div class="hero">
-      <div class="logo">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
-      </div>
-      <h1>Cartório <span>Virtual</span></h1>
-      <p>Plataforma oficial para formalizar e comprovar o vínculo entre duas pessoas, com validade jurídica por meio de testemunhas.</p>
+<div class="app-frame">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-item">
+      <span class="status-dot"></span>
+      Online
     </div>
-
-    <div class="tabs">
-      <button class="active" onclick="switchTab('login')">Entrar</button>
-      <button onclick="switchTab('register')">Criar conta</button>
-    </div>
-
-    <!-- LOGIN FORM -->
-    <div id="form-login">
-      <div class="card card-elevated">
-        <div class="field">
-          <label>E-mail</label>
-          <input type="email" id="login-email" placeholder="seu@email.com">
-        </div>
-        <div class="field">
-          <label>Senha</label>
-          <input type="password" id="login-pass" placeholder="••••••••">
-        </div>
-        <div style="display:flex;align-items:center;gap:.75rem;margin:.75rem 0">
-          <input type="checkbox" id="login-lembrar" style="width:18px;height:18px">
-          <label for="login-lembrar" style="font-size:.9rem;color:var(--muted);cursor:pointer;margin:0">Lembrar de mim</label>
-        </div>
-        <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
-        <div style="text-align:center;margin-top:1rem">
-          <a href="#" style="font-size:.85rem;color:var(--accent);text-decoration:none;font-weight:600">Esqueci minha senha</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- REGISTER FORM -->
-    <div id="form-register" style="display:none">
-      <div class="card card-elevated">
-        <div class="field"><label>Nome completo</label><input type="text" id="reg-nome" placeholder="Seu nome"></div>
-        <div class="field"><label>CPF</label><input type="text" id="reg-cpf" placeholder="000.000.000-00" maxlength="14" oninput="formatCPF(this)"></div>
-        <div class="field"><label>Gênero</label>
-          <select id="reg-genero">
-            <option value="masculino">Masculino</option>
-            <option value="feminino">Feminino</option>
-          </select>
-        </div>
-        <div class="field"><label>E-mail</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
-        <div class="field"><label>Senha</label><input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"></div>
-        <div class="field"><label>Código de convite (opcional)</label><input type="text" id="reg-codigo" placeholder="Ex: CV-ABC12345"></div>
-        <button class="btn btn-primary" onclick="doRegister()">Criar conta</button>
-      </div>
-    </div>
+    <div class="status-item">Premium</div>
   </div>
-</div>
 
-<!-- ===== TERMOS SCREEN ===== -->
-<div class="screen" id="screen-termos">
-  <div class="wrap" style="max-width:480px">
-    <div class="hero">
-      <div class="logo" style="background:linear-gradient(135deg,var(--gold) 0%,#b45309 100%)">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
-      </div>
-      <h1>Termos de <span>Uso</span></h1>
-    </div>
-    <div class="card card-elevated" style="max-height:50vh;overflow:auto;font-size:.9rem;line-height:1.7;color:var(--ink-soft)">
-      <h4 style="color:var(--accent);margin:1rem 0 .5rem;font-size:1rem">1. Natureza do Serviço</h4>
-      <p>Esta plataforma é um espaço para duas pessoas firmarem e celebrar o vínculo entre elas, com validade jurídica por meio de testemunhas.</p>
-      <h4 style="color:var(--accent);margin:1rem 0 .5rem;font-size:1rem">2. Consentimento</h4>
-      <p>Ao aceitar, você declara ter pelo menos 18 anos e consentir voluntariamente com os termos aqui descritos.</p>
-      <h4 style="color:var(--accent);margin:1rem 0 .5rem;font-size:1rem">3. Dados Pessoais</h4>
-      <p>Coletamos nome, CPF, RG, email, telefone, endereço e registros de vínculos. Seus dados são protegidos e não são compartilhados com terceiros.</p>
-      <h4 style="color:var(--accent);margin:1rem 0 .5rem;font-size:1rem">4. Vínculos e Testemunhas</h4>
-      <p>As propostas são voluntárias. O vínculo representa o compromisso mútuo entre as partes, podendo ser testemunhado por familiares e amigos cadastrados.</p>
-      <h4 style="color:var(--accent);margin:1rem 0 .5rem;font-size:1rem">5. Validade Jurídica</h4>
-      <p>Os documentos gerados têm validade como prova documental, podendo ser utilizados em processos judiciais conforme a legislação brasileira.</p>
-    </div>
-    <label style="display:flex;align-items:flex-start;gap:.75rem;font-size:.95rem;margin:1rem 0;cursor:pointer">
-      <input type="checkbox" id="chk-termos" style="width:20px;height:20px;margin-top:2px">
-      <span>Li e aceito os <strong>Termos de Serviço</strong> e a <strong>Política de Privacidade</strong>.</span>
-    </label>
-    <button class="btn btn-primary" onclick="acceptTermos()">Aceitar e continuar</button>
-  </div>
-</div>
-
-<!-- ===== APP SCREEN ===== -->
-<div class="screen" id="screen-app">
-  <div class="topbar">
-    <div style="display:flex;align-items:center">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      </div>
-      <span class="brand" style="-webkit-text-fill-color:initial;color:var(--ink)">Cartório <span style="color:var(--accent)">Virtual</span></span>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="logo">
+      <div class="logo-dot">💍</div>
+      <span class="logo-text">Cartório Virtual</span>
     </div>
     <div class="actions">
-      <button class="icon-btn" onclick="navTo('perfil')" title="Perfil">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+      <div class="avatar">RP</div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <div class="hero-icon">💌</div>
+    <h1>Cartões de Relacionamento</h1>
+    <p>Transforme seu relacionamento em um documento único e exclusivo com o visual premium inspirado em carteiras de estudante</p>
+  </section>
+
+  <!-- Card Container -->
+  <div class="cartao-container">
+    <div class="cartao-wrapper" id="card-container">
+      <!-- Card rendered by JS -->
+    </div>
+    
+    <div class="cartao-actions">
+      <button class="action-preview" onclick="showModal('creator')">
+        ✏️ Editar Cartão
       </button>
-      <button class="icon-btn" onclick="doLogout()" title="Sair">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v9"/><path d="M6.4 7a8 8 0 1 0 11.2 0"/></svg>
+      <button class="action-download" onclick="downloadPDF()">
+        📄 Baixar PDF
       </button>
     </div>
   </div>
 
-  <!-- INÍCIO -->
-  <div class="wrap" id="tab-inicio">
-    <!-- SEM VÍNCULO -->
-    <div id="inicio-sem-vinculo">
-      <div class="profile-header">
-        <div class="avatar avatar-xl" id="inicio-avatar">?</div>
-        <div class="name" id="inicio-nome">...</div>
-        <div class="handle" id="inicio-handle">@voce</div>
-      </div>
-      <div class="card card-accent">
-        <h3>Propor um vínculo</h3>
-        <p style="margin-bottom:1rem">Envie um convite para alguém. Se a pessoa já tem conta, digite o e-mail.</p>
-        <div class="field"><label>E-mail da pessoa (opcional)</label><input type="email" id="prop-email" placeholder="Se a pessoa já tem conta"></div>
-        <div class="field"><label>Tipo de relacionamento</label>
-          <select id="prop-tipo">
-            <option value="namoro">Namoro</option>
-            <option value="noivado">Noivado</option>
-            <option value="casamento">Casamento</option>
-            <option value="uniao-estavel">União Estável</option>
-            <option value="companheiro">Companheiro(a)</option>
-            <option value="parceiro">Parceiro(a)</option>
-            <option value="amizade-colorada">Amizade Colorada</option>
-            <option value="ficante">Ficante</option>
-            <option value="pretendente">Pretendente</option>
-            <option value="conhecido">Conhecido(a)</option>
-            <option value="outro">Outro (personalizar)</option>
-          </select>
-        </div>
-        <div class="field"><label>Modalidade</label>
-          <select id="prop-modalidade">
-            <option value="presencial">Presencial</option>
-            <option value="virtual">Virtual</option>
-            <option value="misto">Misto</option>
-            <option value="outro">Outro</option>
-          </select>
-        </div>
-        <div class="field"><label>Mensagem (opcional)</label><textarea id="prop-msg" placeholder="Quer se vincular comigo?"></textarea></div>
-        <button class="btn btn-primary" onclick="sendProposta()">Enviar proposta</button>
-      </div>
-      <div class="section-label">Recebidas</div>
-      <div id="box-recebidas"><div class="empty"><div class="empty-icon">📩</div>Nenhuma proposta recebida.</div></div>
-      <div class="section-label">Enviadas</div>
-      <div id="box-enviadas"><div class="empty"><div class="empty-icon">📤</div>Você ainda não enviou propostas.</div></div>
-    </div>
-
-    <!-- COM VÍNCULO -->
-    <div id="inicio-com-vinculo" style="display:none">
-      <div class="profile-header">
-        <div style="display:flex;justify-content:center;gap:1.5rem;align-items:center">
-          <div style="text-align:center">
-            <div class="avatar avatar-lg" id="casal-avatar-a">?</div>
-            <div style="font-size:.9rem;font-weight:700;margin-top:.5rem" id="casal-nome-a">...</div>
-          </div>
-          <div class="ring-wrap">
-            <svg viewBox="0 0 120 120" width="100" height="100">
-              <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#b91c1c"/><stop offset="100%" style="stop-color:#d97706"/></linearGradient></defs>
-              <circle cx="60" cy="60" r="52" fill="none" stroke="url(#rg)" stroke-width="8"/>
-            </svg>
-          </div>
-          <div style="text-align:center">
-            <div class="avatar avatar-lg" id="casal-avatar-b">?</div>
-            <div style="font-size:.9rem;font-weight:700;margin-top:.5rem" id="casal-nome-b">...</div>
-          </div>
-        </div>
-        <div class="handle">Juntos há</div>
-        <div class="ring-wrap">
-          <svg viewBox="0 0 120 120" width="160" height="160"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(185,28,28,.1)" stroke-width="10"/><circle cx="60" cy="60" r="52" fill="none" stroke="url(#rg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="40" transform="rotate(-90 60 60)"/></svg>
-          <div class="ring-num"><span id="casal-dias" style="font-size:1.5rem;font-weight:900;color:var(--accent)">0</span><small>dias</small></div>
-        </div>
-      </div>
-      <div class="stats">
-        <div class="stat"><div class="n" id="casal-anos">0</div><div class="l">Anos</div></div>
-        <div class="stat"><div class="n" id="casal-meses">0</div><div class="l">Meses</div></div>
-        <div class="stat"><div class="n" id="casal-dias-resto">0</div><div class="l">Dias</div></div>
-      </div>
-      <div class="section-label">Detalhes do vínculo</div>
-      <div class="card">
-        <div class="list-row"><span class="k">Tipo</span><span class="v" id="casal-tipo">--</span></div>
-        <div class="list-row"><span class="k">Desde</span><span class="v" id="casal-desde">--</span></div>
-        <div class="list-row"><span class="k">Modalidade</span><span class="v" id="casal-modalidade">--</span></div>
-      </div>
-      <div id="parceiro-dados"></div>
-    </div>
-  </div>
-
-  <!-- CONTRATOS -->
-  <div class="wrap" id="tab-contratos" style="display:none">
-    <div class="card card-accent">
-      <div style="display:flex;align-items:center;gap:.75rem">
-        <div style="font-size:2rem">📜</div>
-        <div>
-          <div style="font-weight:800;font-size:1.1rem">Contratos e Declarações</div>
-          <div style="opacity:.9;font-size:.85rem">Crie documentos com validade jurídica</div>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:right;margin:.75rem 0">
-      <button class="btn btn-primary btn-sm" onclick="openModal('modal-novo-contrato')" style="width:auto;padding:.75rem 1.5rem">+ Novo documento</button>
-    </div>
-    <div class="section-label">Criados por mim</div>
-    <div id="box-contratos-criados"><div class="empty"><div class="empty-icon">📄</div>Nenhum documento criado.</div></div>
-    <div class="section-label">Recebidos</div>
-    <div id="box-contratos-recebidos"><div class="empty"><div class="empty-icon">📥</div>Nenhum documento recebido.</div></div>
-    <div class="section-label">Assinados</div>
-    <div id="box-contratos-assinados"><div class="empty"><div class="empty-icon">✅</div>Nenhum documento assinado.</div></div>
-  </div>
-
-  <!-- PARENTES -->
-  <div class="wrap" id="tab-parentes" style="display:none">
-    <div class="card card-accent">
-      <div style="display:flex;align-items:center;gap:.75rem">
-        <div style="font-size:2rem">👨‍👩‍👧</div>
-        <div>
-          <div style="font-weight:800;font-size:1.1rem">Parentes e Família</div>
-          <div style="opacity:.9;font-size:.85rem">Cadastre familiares para serem testemunhas</div>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:right;margin:.75rem 0">
-      <button class="btn btn-primary btn-sm" onclick="openModal('modal-novo-parente')" style="width:auto;padding:.75rem 1.5rem">+ Criar convite</button>
-    </div>
-    <div class="section-label">Meus parentes</div>
-    <div id="box-parentes"><div class="empty"><div class="empty-icon">👥</div>Nenhum parente cadastrado.</div></div>
-  </div>
-
-  <!-- PERFIL -->
-  <div class="wrap" id="tab-perfil" style="display:none">
-    <div class="profile-header">
-      <div class="foto-upload" onclick="document.getElementById('input-foto').click()">
-        <div class="avatar avatar-xl" id="perfil-avatar">?</div>
-        <div class="edit-foto">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-        </div>
-        <input type="file" id="input-foto" accept="image/*" style="display:none" onchange="uploadFoto(this)">
-      </div>
-      <div class="name" id="perfil-nome">...</div>
-      <div class="handle" id="perfil-handle">@voce</div>
-    </div>
-    <div class="section-label">Dados pessoais</div>
-    <div class="card">
-      <div class="list-row"><span class="k">Nome</span><span class="v" id="perfil-nome2">--</span></div>
-      <div class="list-row"><span class="k">CPF</span><span class="v" id="perfil-cpf">--</span></div>
-      <div class="list-row"><span class="k">RG</span><span class="v" id="perfil-rg">--</span></div>
-      <div class="list-row"><span class="k">Gênero</span><span class="v" id="perfil-genero">--</span></div>
-      <div class="list-row"><span class="k">E-mail</span><span class="v" id="perfil-email">--</span></div>
-      <div class="list-row"><span class="k">Telefone</span><span class="v" id="perfil-telefone">--</span></div>
-      <div class="list-row"><span class="k">Nascimento</span><span class="v" id="perfil-nascimento">--</span></div>
-      <div class="list-row"><span class="k">Profissão</span><span class="v" id="perfil-profissao">--</span></div>
-      <div class="list-row"><span class="k">Estado civil</span><span class="v" id="perfil-estado-civil">--</span></div>
-    </div>
-    <button class="btn btn-ghost" onclick="openModal('modal-editar-perfil')">Editar dados</button>
-    <div id="btn-admin" style="margin-top:.7rem;display:none"><button class="btn btn-gold" onclick="navTo('admin')">⚙️ Painel ADM</button></div>
-    <div style="margin-top:.7rem"><button class="btn btn-ghost" onclick="doLogout()">Sair</button></div>
-  </div>
-
-  <!-- ADMIN -->
-  <div class="wrap" id="tab-admin" style="display:none">
-    <div class="card card-accent" style="margin-bottom:1rem">
-      <h3>Painel Administrativo</h3>
-      <p style="font-size:.9rem;opacity:.9">Gerencie usuários e vínculos do Cartório Virtual</p>
-    </div>
-    <div class="stats">
-      <div class="stat"><div class="n" id="admin-total-users">0</div><div class="l">Usuários</div></div>
-      <div class="stat"><div class="n" id="admin-total-vinculos">0</div><div class="l">Vínculos</div></div>
-      <div class="stat"><div class="n" id="admin-total-propostas">0</div><div class="l">Propostas</div></div>
-    </div>
-    <div class="section-label">Usuários cadastrados</div>
-    <div id="admin-lista-users" style="margin-bottom:2rem"></div>
-    <div class="section-label">Vínculos ativos</div>
-    <div id="admin-lista-vinculos" style="margin-bottom:2rem"></div>
-    <div class="section-label">Propostas pendentes</div>
-    <div id="admin-lista-propostas"></div>
-  </div>
-
+  <!-- Bottom Nav -->
   <nav class="bottom-nav">
-    <button class="active" onclick="navTo('inicio')">
-      <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg></span>
-      Início
+    <button class="active" onclick="switchTab('home')">
+      <span class="nav-icon">🏠</span>
+      <span>Início</span>
+      <span class="indicator"></span>
     </button>
-    <button onclick="navTo('contratos')">
-      <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg></span>
-      Documentos
+    <button onclick="switchTab('cards')">
+      <span class="nav-icon">💳</span>
+      <span>Cartões</span>
+      <span class="indicator"></span>
     </button>
-    <button onclick="navTo('parentes')">
-      <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span>
-      Parentes
+    <button onclick="switchTab('docs')">
+      <span class="nav-icon">📄</span>
+      <span>Documentos</span>
+      <span class="indicator"></span>
     </button>
-    <button onclick="navTo('perfil')">
-      <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg></span>
-      Perfil
+    <button onclick="switchTab('profile')">
+      <span class="nav-icon">👤</span>
+      <span>Perfil</span>
+      <span class="indicator"></span>
     </button>
   </nav>
-</div>
 
-<!-- ===== MODALS ===== -->
-<div class="modal-overlay" id="modal-novo-contrato">
-  <div class="modal">
-    <div class="handle-bar"></div>
-    <h3>Novo documento</h3>
-    <div class="tabs">
-      <button class="active" onclick="switchDocTab('contrato')">Contrato</button>
-      <button onclick="switchDocTab('declaracao')">Declaração</button>
-      <button onclick="switchDocTab('certificado')">Certificado</button>
-      <button onclick="switchDocTab('regras')">Regras</button>
-    </div>
+  <!-- Toast -->
+  <div class="toast" id="toast">Cartão baixado com sucesso! 📄</div>
 
-    <div id="tab-doc-contrato">
-      <div class="field"><label>Tipo de relacionamento</label>
-        <select id="doc-tipo" onchange="updateDocModelos()">
-          <option value="">-- Selecione --</option>
-          <option value="namoro">Namoro</option>
-          <option value="noivado">Noivado</option>
-          <option value="casamento">Casamento</option>
-          <option value="uniao-estavel">União Estável</option>
-          <option value="companheiro">Companheiro(a)</option>
-          <option value="amizade-colorada">Amizade Colorada</option>
-        </select>
+  <!-- Creator Modal -->
+  <div id="creator-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-handle"></div>
+      <div class="modal-header">
+        <h2>Criar Novo Cartão</h2>
+        <button class="close-btn" onclick="closeModal('creator-modal')">&times;</button>
       </div>
-      <div class="field"><label>Modelo do contrato</label>
-        <select id="doc-modelo" onchange="updateDocPreview()"><option value="">-- Selecione --</option></select>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Seu nome</label>
+          <input type="text" id="nome1" placeholder="Digite seu nome" value="Você" />
+        </div>
+        <div class="form-group">
+          <label>Nome do parceiro(a)</label>
+          <input type="text" id="nome2" placeholder="Digite o nome do parceiro" value="Amor da minha vida" />
+        </div>
+        <div class="form-group">
+          <label>Data de início</label>
+          <input type="date" id="sinceDate" value="2023-06-15" />
+        </div>
+        <div class="form-group">
+          <label>Nível de relacionamento</label>
+          <select id="level">
+            <option value="namoro">💘 Namorando</option>
+            <option value="noivado" selected>💍 Noivado</option>
+            <option value="casamento">👰 Casamento</option>
+            <option value="uniao">🤝 União Estável</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Emoji do casal</label>
+          <input type="text" id="emoji" placeholder="💑" value="💑" />
+        </div>
+        <div class="form-group">
+          <label>Frase do cartão</label>
+          <input type="text" id="motd" placeholder="Digite uma frase especial..." value="Juntos por decisão, unidos por escolha." />
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button class="btn btn-secondary" style="flex:1" onclick="closeModal('creator-modal')">Cancelar</button>
+          <button class="btn btn-primary" style="flex:1" onclick="createCard()">Criar Cartão</button>
+        </div>
       </div>
-      <div class="field"><label>Enviar para o(a) parceiro(a)</label><select id="doc-parceiro"><option value="">-- Selecione --</option></select></div>
-      <div class="field"><label>Testemunhas</label><select id="doc-testemunhas" multiple size="3"></select></div>
-      <div class="section-label">Pré-visualização</div>
-      <div class="contrato-preview" id="preview-doc">Selecione um modelo...</div>
-      <div class="btn-row" style="margin-top:1rem"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-contrato')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="enviarDocumento()">Enviar</button></div>
     </div>
-
-    <div id="tab-doc-declaracao" style="display:none">
-      <div class="field"><label>Tipo</label>
-        <select id="dec-tipo" onchange="updateDecModelos()">
-          <option value="">-- Selecione --</option>
-          <option value="namoro">Namoro</option>
-          <option value="noivado">Noivado</option>
-          <option value="casamento">Casamento</option>
-          <option value="uniao-estavel">União Estável</option>
-        </select>
-      </div>
-      <div class="field"><label>Modelo</label><select id="dec-modelo" onchange="updateDecPreview()"><option value="">-- Selecione --</option></select></div>
-      <div class="field"><label>Enviar para</label><select id="dec-parceiro"><option value="">-- Selecione --</option></select></div>
-      <div class="section-label">Pré-visualização</div>
-      <div class="contrato-preview" id="preview-dec">Selecione um modelo...</div>
-      <div class="btn-row" style="margin-top:1rem"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-contrato')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="enviarDeclaracao()">Enviar</button></div>
-    </div>
-
-    <div id="tab-doc-certificado" style="display:none">
-      <div class="field"><label>Tipo</label>
-        <select id="cert-tipo" onchange="updateCertModelos()">
-          <option value="">-- Selecione --</option>
-          <option value="namoro">Namoro</option>
-          <option value="noivado">Noivado</option>
-          <option value="casamento">Casamento</option>
-          <option value="uniao-estavel">União Estável</option>
-        </select>
-      </div>
-      <div class="field"><label>Modelo</label><select id="cert-modelo" onchange="updateCertPreview()"><option value="">-- Selecione --</option></select></div>
-      <div class="section-label">Pré-visualização</div>
-      <div class="contrato-preview" id="preview-cert">Selecione um modelo...</div>
-      <div class="btn-row" style="margin-top:1rem"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-contrato')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="gerarCertificado()">Gerar</button></div>
-    </div>
-
-    <div id="tab-doc-regras" style="display:none">
-      <div class="field"><label>Tipo de regras</label>
-        <select id="regras-tipo" onchange="updateRegrasModelo()">
-          <option value="">-- Selecione --</option>
-          <option value="regras-relacionamento">Regras do Relacionamento</option>
-          <option value="regras-casal">Regras de Convivência (Coabitação)</option>
-        </select>
-      </div>
-      <div class="field"><label>Enviar para</label><select id="regras-parceiro"><option value="">-- Selecione --</option></select></div>
-      <div class="section-label">Pré-visualização</div>
-      <div class="contrato-preview" id="preview-regras">Selecione um modelo...</div>
-      <div class="btn-row" style="margin-top:1rem"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-contrato')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="enviarRegras()">Enviar</button></div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-novo-parente">
-  <div class="modal">
-    <div class="handle-bar"></div>
-    <h3>Criar convite</h3>
-    <p style="font-size:.9rem;color:var(--muted);margin-bottom:1.25rem">Crie um convite para um parente. Ele só poderá criar conta com esse convite.</p>
-    <div class="field"><label>Parentesco</label>
-      <select id="parente-grau">
-        <option value="mae">Mãe</option><option value="pai">Pai</option><option value="irmao">Irmão(a)</option>
-        <option value="avo">Avô(o)</option><option value="tio">Tio(a)</option><option value="primo">Primo(a)</option>
-        <option value="amigo">Amigo(a)</option><option value="outro">Outro (personalizar)</option>
-      </select>
-    </div>
-    <div class="field"><label>E-mail do parente (opcional)</label><input type="email" id="parente-email" placeholder="Se quiser, informe o e-mail"></div>
-    <div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-novo-parente')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="gerarConvite()">Gerar convite</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-editar-perfil">
-  <div class="modal">
-    <div class="handle-bar"></div>
-    <h3>Editar dados</h3>
-    <div class="field"><label>Nome</label><input type="text" id="edit-nome"></div>
-    <div class="field"><label>CPF</label><input type="text" id="edit-cpf" oninput="formatCPF(this)"></div>
-    <div class="field"><label>RG</label><input type="text" id="edit-rg"></div>
-    <div class="field"><label>Telefone</label><input type="text" id="edit-telefone" oninput="formatTelefone(this)"></div>
-    <div class="field"><label>Nascimento</label><input type="date" id="edit-nascimento"></div>
-    <div class="field"><label>Nacionalidade</label><input type="text" id="edit-nacionalidade"></div>
-    <div class="field"><label>Naturalidade</label><input type="text" id="edit-naturalidade"></div>
-    <div class="field"><label>Profissão</label><input type="text" id="edit-profissao"></div>
-    <div class="field"><label>Estado civil</label>
-      <select id="edit-estado-civil">
-        <option value="">--</option><option value="solteiro">Solteiro(a)</option><option value="casado">Casado(a)</option>
-        <option value="divorciado">Divorciado(a)</option><option value="viuvo">Viúvo(a)</option><option value="uniao-estavel">União Estável</option>
-      </select>
-    </div>
-    <div class="field"><label>Nome da mãe</label><input type="text" id="edit-mae"></div>
-    <div class="field"><label>Nome do pai</label><input type="text" id="edit-pai"></div>
-    <div class="field"><label>Endereço</label><input type="text" id="edit-endereco"></div>
-    <div class="btn-row"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-editar-perfil')">Cancelar</button><button class="btn btn-primary btn-sm" onclick="salvarPerfil()">Salvar</button></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-admin">
-  <div class="modal">
-    <div class="handle-bar"></div>
-    <h3>Painel Administrativo</h3>
-    <div class="stats">
-      <div class="stat"><div class="n" id="modal-admin-users">0</div><div class="l">Usuários</div></div>
-      <div class="stat"><div class="n" id="modal-admin-vinculos">0</div><div class="l">Vínculos</div></div>
-      <div class="stat"><div class="n" id="modal-admin-propostas">0</div><div class="l">Propostas</div></div>
-    </div>
-    <div class="btn-row" style="margin-top:1rem"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-admin')">Fechar</button></div>
   </div>
 </div>
 
 <script>
-// ========== SUPABASE CONFIG ==========
-const SUPABASE_URL = 'https://uyunzkmfyffjdvbmgswf.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dW56a21meWZmamR2Ym1nc3dmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY4NTQ3NzEsImV4cCI6MjEwMjQzMDc3MX0.CtwWrZmDlbGOoBRGVY3dy0ReFNP0vCO1pEDqs5HDc70';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentCard = {
+  id: Date.now(),
+  partner1: 'Você',
+  partner2: 'Amor da minha vida',
+  sinceDate: '2023-06-15',
+  level: 'noivado',
+  emoji: '💑',
+  motd: 'Juntos por decisão, unidos por escolha.',
+  badges: ['💕', '🌹', '💍']
+};
 
-// ========== STATE ==========
-let currentUser = null;
-let currentPerfil = null;
-let currentVinculo = null;
+const levelLabels = {
+  namoro: 'Namorando',
+  noivado: 'Noivado',
+  casamento: 'Casados',
+  uniao: 'União Estável'
+};
 
-// ========== INIT ==========
-(async function init(){
-  const urlParams = new URLSearchParams(window.location.search);
-  const conviteUrl = urlParams.get('convite');
+const levelClasses = {
+  namoro: 'level-namoro',
+  noivado: 'level-noivado',
+  casamento: 'level-casamento',
+  uniao: 'level-uniao'
+};
 
-  // Check for saved session
-  const { data: { session } } = await sb.auth.getSession();
-  if (session?.user) {
-    currentUser = session.user;
-    await loadPerfil(session.user);
-    if (currentPerfil?.termos) {
-      showScreen('screen-app');
-      navTo('inicio');
-    } else {
-      showScreen('screen-termos');
-    }
-    // Check for convite
-    if (conviteUrl) {
-      const { data: convite } = await sb.from('convites').select('*').eq('codigo', conviteUrl).single();
-      if (convite) {
-        await sb.from('parentes').insert({
-          casal_id: convite.user_id, nome: currentPerfil.nome, email: currentPerfil.email, cpf: currentPerfil.cpf, grau: convite.grau,
-          user_id: session.user.id, status: 'aceito'
-        });
-        await sb.from('convites').update({ status: 'aceito' }).eq('codigo', conviteUrl);
-        toast('Conta criada e vínculo confirmado!');
-      }
-    }
+const levelBadgeClasses = {
+  namoro: 'badge-namoro',
+  noivado: 'badge-noivado',
+  casamento: 'badge-casamento',
+  uniao: 'badge-uniao'
+};
+
+function renderCard(card) {
+  const container = document.getElementById('card-container');
+  container.innerHTML = `
+    <div class="cartao-relacionamento ${levelClasses[card.level]}">
+      <div class="cartao-header">
+        <div class="cartao-logo">
+          <div class="logo-icon">${card.emoji}</div>
+          <span class="cartao-logo-text">Cartão de Relacionamento</span>
+        </div>
+        <div class="cartao-level ${levelBadgeClasses[card.level]}">${levelLabels[card.level]}</div>
+      </div>
+      
+      <div class="cartao-body">
+        <div class="cartao-names">
+          <div class="nome-principal">${card.partner1}</div>
+          <div class="coracao-container">
+            <div class="coracao">💕</div>
+            <div class="coracao" style="animation-delay: 0.2s;">💕</div>
+            <div class="coracao" style="animation-delay: 0.4s;">💕</div>
+          </div>
+          <div class="nome-parceiro">${card.partner2}</div>
+        </div>
+        
+        <div class="cartao-data">
+          💘 Juntos desde: ${new Date(card.sinceDate).toLocaleDateString('pt-BR')}
+        </div>
+        
+        <div class="cartao-qr">
+          <div class="qr-code"></div>
+          <div class="qr-info">
+            <div class="qr-title">ID do Par</div>
+            <div class="qr-desc">${card.id.toString().slice(-8)}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="cartao-footer">
+        <div class="motd">${card.motd}</div>
+        <div class="cartao-badges">
+          ${card.badges.map(b => `<div class="cartao-badge">${b}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function showModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = 'block';
+    setTimeout(() => modal.classList.add('active'), 10);
   }
+}
 
-  // Check for saved lastUser
-  const lastUser = JSON.parse(localStorage.getItem('lastUser') || 'null');
-  if (lastUser && !session) {
-    mostrarIconeContinuar(lastUser);
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.remove('active');
+    setTimeout(() => modal.style.display = 'none', 300);
   }
-})();
-
-// ========== NAVIGATION ==========
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
 }
 
-function switchTab(tab){
-  const tabs = document.querySelectorAll('#screen-welcome .tabs button');
-  tabs.forEach(t => t.classList.remove('active'));
-  if(tab === 'login'){ tabs[0].classList.add('active'); document.getElementById('form-login').style.display='block'; document.getElementById('form-register').style.display='none'; }
-  else { tabs[1].classList.add('active'); document.getElementById('form-login').style.display='none'; document.getElementById('form-register').style.display='block'; }
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-function openModal(id){ document.getElementById(id).classList.add('active'); }
-function closeModal(id){ document.getElementById(id).classList.remove('active'); }
-
-function toast(msg){
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3500);
-}
-
-// ========== AUTH ==========
-async function doLogin(){
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const pass = document.getElementById('login-pass').value;
-  if(!email||!pass) return toast('Preencha e-mail e senha');
-
-  const { data: authData, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  if (error) return toast('E-mail ou senha incorretos');
-
-  currentUser = authData.user;
-  await loadPerfil(authData.user);
-
-  if(!currentPerfil?.termos) { showScreen('screen-termos'); }
-  else { showScreen('screen-app'); navTo('inicio'); }
-}
-
-async function doRegister(){
-  const nome = document.getElementById('reg-nome').value.trim();
-  const cpf = document.getElementById('reg-cpf').value.replace(/\D/g,'');
-  const genero = document.getElementById('reg-genero').value;
-  const email = document.getElementById('reg-email').value.trim().toLowerCase();
-  const pass = document.getElementById('reg-pass').value;
-  if(!nome||!cpf||!email||!pass) return toast('Preencha todos os campos');
-  if(pass.length<6) return toast('Senha: mínimo 6 caracteres');
-
-  const { data: authData, error: authError } = await sb.auth.signUp({
-    email, password: pass, options: { data: { nome, cpf, genero } }
-  });
-  if (authError) return toast('Erro ao criar conta: ' + authError.message);
-
-  const { error: insertError } = await sb.from('perfis').insert({
-    id: authData.user.id, email, nome, cpf, genero,
-    rg:'', telefone:'', nascimento:null, nacionalidade:'',
-    naturalidade:'', profissao:'', estado_civil:'', mae:'', pai:'', endereco:'', foto:null
-  });
-  if (insertError) return toast('Erro ao salvar perfil');
-
-  currentUser = authData.user;
-  currentPerfil = { id: authData.user.id, email, nome, cpf, genero, termos: false };
-  showScreen('screen-termos');
-}
-
-async function doLogout(){
-  await sb.auth.signOut();
-  currentUser = null; currentPerfil = null; currentVinculo = null;
-  showScreen('screen-welcome');
-}
-
-async function acceptTermos(){
-  if(!document.getElementById('chk-termos').checked) return toast('Marque a caixa para aceitar');
-  const { error } = await sb.from('perfis').update({ termos: true }).eq('id', currentUser.id);
-  if (error) return toast('Erro ao salvar');
-  currentPerfil.termos = true;
-  showScreen('screen-app');
-  navTo('inicio');
-}
-
-// ========== PERFIL ==========
-async function loadPerfil(user){
-  if (!user) { const { data: { session } } = await sb.auth.getSession(); if (!session?.user) return; user = session.user; }
-  currentUser = user;
-  const { data: perfil } = await sb.from('perfis').select('*').eq('id', user.id).single();
-  if (!perfil) return;
-  currentPerfil = perfil;
-
-  if (perfil.email === 'rubensfernandes2112@gmail.com') {
-    const btnAdmin = document.getElementById('btn-admin');
-    if (btnAdmin) btnAdmin.style.display = 'block';
-  }
-
-  // Load vinculo
-  const { data: vinculos } = await sb.from('vinculos').select('*').or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`).eq('status', 'ativo').single();
-  currentVinculo = vinculos || null;
-}
-
-async function loadPerfilById(id){
-  const { data } = await sb.from('perfis').select('*').eq('id', id).single();
-  return data;
-}
-
-function mostrarIconeContinuar(user){
-  const div = document.createElement('div');
-  div.id = 'icone-continuar';
-  div.style.cssText = 'position:fixed;bottom:2rem;right:2rem;z-index:9999;cursor:pointer;text-align:center';
-  div.innerHTML = `<div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;font-weight:800;box-shadow:0 8px 32px rgba(185,28,28,0.3)" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${user.nome.charAt(0)}</div><div style="font-size:.7rem;color:var(--muted);margin-top:.3rem;font-weight:600">${user.nome.split(' ')[0]}</div>`;
-  div.onclick = loginSalvo;
-  document.body.appendChild(div);
-}
-
-async function loginSalvo(){
-  const user = JSON.parse(localStorage.getItem('lastUser') || 'null');
-  if (!user) return toast('Faça login novamente');
-  const pass = prompt('Digite sua senha para continuar:');
-  if (!pass) return;
-  const { data: authData, error } = await sb.auth.signInWithPassword({ email: user.email, password: pass });
-  if (error) return toast('Senha incorreta');
-  currentUser = authData.user;
-  await loadPerfil(authData.user);
-  document.getElementById('icone-continuar')?.remove();
-  if(!currentPerfil?.termos) { showScreen('screen-termos'); }
-  else { showScreen('screen-app'); navTo('inicio'); }
-}
-
-// ========== APP NAVIGATION ==========
-function navTo(tela){
-  ['inicio','contratos','parentes','perfil','admin'].forEach(t=>{
-    const el = document.getElementById('tab-'+t);
-    if(el) el.style.display = t===tela ? 'block' : 'none';
-  });
-  document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));
-  const map = {inicio:0, contratos:1, parentes:2, perfil:3};
-  const btn = document.querySelectorAll('.bottom-nav button')[map[tela]];
-  if(btn) btn.classList.add('active');
-  if(tela==='inicio') loadInicio();
-  if(tela==='contratos') loadContratos();
-  if(tela==='parentes') loadParentes();
-  if(tela==='perfil') loadPerfilView();
-  if(tela==='admin') loadAdmin();
-}
-
-// ========== INICIO ==========
-async function loadInicio(){
-  if (!currentPerfil) return;
-  const ini = currentPerfil.nome.charAt(0).toUpperCase() || '?';
-  const av = document.getElementById('inicio-avatar');
-  if(currentPerfil.foto) av.innerHTML='<img src="'+currentPerfil.foto+'" alt="foto" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
-  else av.textContent=ini;
-  document.getElementById('inicio-nome').textContent = currentPerfil.nome;
-  document.getElementById('inicio-handle').textContent = '@'+(currentPerfil.email?currentPerfil.email.split('@')[0]:currentPerfil.nome.toLowerCase().replace(/\s/g,''));
-
-  // Load vinculo
-  const { data: vinculos } = await sb.from('vinculos').select('*').or(`user1_id.eq.${currentUser.id},user2_id.eq.${currentUser.id}`).eq('status', 'ativo').single();
-  currentVinculo = vinculos || null;
-
-  if(currentVinculo){
-    document.getElementById('inicio-sem-vinculo').style.display='none';
-    document.getElementById('inicio-com-vinculo').style.display='block';
-
-    const parceiroId = currentVinculo.user1_id === currentUser.id ? currentVinculo.user2_id : currentVinculo.user1_id;
-    const parceiro = await loadPerfilById(parceiroId);
-
-    const avA = document.getElementById('casal-avatar-a');
-    const avB = document.getElementById('casal-avatar-b');
-    if(currentPerfil.foto) avA.innerHTML='<img src="'+currentPerfil.foto+'" alt="foto" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
-    else avA.innerHTML='<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>';
-    if(parceiro?.foto) avB.innerHTML='<img src="'+parceiro.foto+'" alt="foto" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
-    else avB.innerHTML='<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>';
-
-    document.getElementById('casal-nome-a').textContent=currentPerfil.nome.split(' ')[0];
-    document.getElementById('casal-nome-b').textContent=(parceiro?parceiro.nome.split(' ')[0]:'?');
-    const d=new Date(currentVinculo.desde);
-    const dias=Math.max(0,Math.floor((Date.now()-d.getTime())/86400000));
-    document.getElementById('casal-dias').textContent=dias;
-    document.getElementById('casal-anos').textContent=Math.floor(dias/365);
-    document.getElementById('casal-meses').textContent=Math.floor((dias%365)/30);
-    document.getElementById('casal-dias-resto').textContent=(dias%365)%30;
-    document.getElementById('casal-tipo').textContent=currentVinculo.tipo||'--';
-    document.getElementById('casal-desde').textContent=d.toLocaleDateString('pt-BR');
-    document.getElementById('casal-modalidade').textContent=currentVinculo.modalidade||'--';
-
-    const parceiroSection=document.getElementById('parceiro-dados');
-    if(parceiro){
-      parceiroSection.style.display='block';
-      parceiroSection.innerHTML=`<div class="card" style="margin-top:1rem"><h3>${parceiro.nome}</h3><div class="list-row"><span class="k">CPF</span><span class="v">${parceiro.cpf||'--'}</span></div><div class="list-row"><span class="k">E-mail</span><span class="v">${parceiro.email||'--'}</span></div></div>`;
-    } else { parceiroSection.style.display='none'; }
-  } else {
-    document.getElementById('inicio-sem-vinculo').style.display='block';
-    document.getElementById('inicio-com-vinculo').style.display='none';
-  }
-
-  // Load propostas
-  const { data: propostasEnviadas } = await sb.from('propostas').select('*').eq('de_id', currentUser.id);
-  const { data: propostasRecebidas } = await sb.from('propostas').select('*').eq('para_id', currentUser.id);
-
-  const boxRecebidas=document.getElementById('box-recebidas');
-  if(propostasRecebidas && propostasRecebidas.length){
-    boxRecebidas.innerHTML='';
-    for (const p of propostasRecebidas) {
-      const dePerfil = await loadPerfilById(p.de_id);
-      const div=document.createElement('div');
-      div.className='proposta';
-      div.innerHTML=`<div class="quem"><div class="av">${dePerfil?dePerfil.nome.charAt(0):'?'}</div><div class="nm">${dePerfil?dePerfil.nome.split(' ')[0]:'?'}</div></div><div class="tx">${p.mensagem||'Proposta de vínculo'}</div><div style="font-size:.8rem;color:var(--muted);margin:.3rem 0"><b>Tipo:</b> ${p.tipo} | <b>Modalidade:</b> ${p.modalidade||'--'}</div><div class="status ${p.status==='pendente'?'pend':p.status==='aceito'?'aceito':'recusado'}">${p.status==='pendente'?'Pendente':p.status==='aceito'?'Aceito':'Recusado'}</div>${p.status==='pendente'?'<div class="btn-row" style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="recusarProposta(\''+p.id+'\')">Recusar</button><button class="btn btn-primary btn-sm" onclick="aceitarProposta(\''+p.id+'\')">Aceitar</button></div>':''}`;
-      boxRecebidas.appendChild(div);
-    }
-  } else { boxRecebidas.innerHTML='<div class="empty"><div class="empty-icon">📩</div>Nenhuma proposta recebida.</div>'; }
-
-  const boxEnviadas=document.getElementById('box-enviadas');
-  if(propostasEnviadas && propostasEnviadas.length){
-    boxEnviadas.innerHTML='';
-    for (const p of propostasEnviadas) {
-      const paraPerfil = await loadPerfilById(p.para_id);
-      const div=document.createElement('div');
-      div.className='proposta';
-      div.innerHTML=`<div class="quem"><div class="av">${paraPerfil?paraPerfil.nome.charAt(0):'?'}</div><div class="nm">${paraPerfil?paraPerfil.nome.split(' ')[0]:'?'}</div></div><div class="tx">${p.mensagem||'Proposta de vínculo'}</div><div class="status ${p.status==='pendente'?'pend':p.status==='aceito'?'aceito':'recusado'}">${p.status==='pendente'?'Pendente':p.status==='aceito'?'Aceito':'Recusado'}</div>`;
-      boxEnviadas.appendChild(div);
-    }
-  } else { boxEnviadas.innerHTML='<div class="empty"><div class="empty-icon">📤</div>Você ainda não enviou propostas.</div>'; }
-}
-
-// ========== PROPOSTAS ==========
-async function sendProposta(){
-  const email = document.getElementById('prop-email').value.trim().toLowerCase();
-  const tipo = document.getElementById('prop-tipo').value;
-  const modalidade = document.getElementById('prop-modalidade').value;
-  const mensagem = document.getElementById('prop-msg').value.trim();
-
-  if(!email) return toast('Digite o e-mail da pessoa');
-
-  // Find user by email
-  const { data: perfis } = await sb.from('perfis').select('id').eq('email', email).single();
-  if(!perfis) return toast('Pessoa não encontrada. Peça para criar conta primeiro.');
-
-  // Create proposta
-  const { error } = await sb.from('propostas').insert({
-    de_id: currentUser.id, para_id: perfis.id, tipo, modalidade, mensagem, status: 'pendente'
-  });
-  if(error) return toast('Erro ao enviar proposta');
-
-  toast('Proposta enviada!');
-  loadInicio();
-}
-
-async function aceitarProposta(id){
-  const { data: proposta } = await sb.from('propostas').select('*').eq('id', id).single();
-  if(!proposta) return;
-
-  // Update proposta
-  await sb.from('propostas').update({ status: 'aceito' }).eq('id', id);
-
-  // Create vinculo
-  await sb.from('vinculos').insert({
-    user1_id: proposta.de_id, user2_id: proposta.para_id,
-    tipo: proposta.tipo, modalidade: proposta.modalidade,
-    status: 'ativo', desde: new Date().toISOString()
-  });
-
-  toast('Vínculo criado!');
-  loadInicio();
-}
-
-async function recusarProposta(id){
-  await sb.from('propostas').update({ status: 'recusado' }).eq('id', id);
-  toast('Proposta recusada');
-  loadInicio();
-}
-
-// ========== CONTRATOS ==========
-async function loadContratos(){
-  if(!currentVinculo) return;
-  const { data: contratosCriados } = await sb.from('contratos').select('*').eq('vinculo_id', currentVinculo.id);
-  const { data: contratosRecebidos } = await sb.from('documentos_recebidos').select('contratostitulo,texto,status').eq('user_id', currentUser.id);
-
-  const boxCriados = document.getElementById('box-contratos-criados');
-  if(contratosCriados && contratosCriados.length){
-    boxCriados.innerHTML='';
-    contratosCriados.forEach(c=>{
-      const div=document.createElement('div');
-      div.className='card';
-      div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:start"><div><div style="font-weight:800;font-size:1rem">${c.titulo}</div><div style="font-size:.8rem;color:var(--muted);margin-top:.25rem">${c.status}</div></div><span class="badge ${c.status==='assinado'?'ok':c.status==='criado'?'gold':'no'}">${c.status}</span></div><div class="btn-row" style="margin-top:.75rem"><button class="btn btn-ghost btn-sm" onclick="verContrato('${c.id}')">Ver</button></div>`;
-      boxCriados.appendChild(div);
-    });
-  } else { boxCriados.innerHTML='<div class="empty"><div class="empty-icon">📄</div>Nenhum documento criado.</div>'; }
-}
-
-async function verContrato(id){
-  const { data } = await sb.from('contratos').select('*').eq('id', id).single();
-  if(!data) return;
-  const modal = document.createElement('div');
-  modal.className = 'modal-overlay active';
-  modal.innerHTML = `<div class="modal"><div class="handle-bar"></div><h3>${data.titulo}</h3><div class="contrato-preview" style="max-height:60vh">${data.texto}</div><div class="btn-row" style="margin-top:1rem"><button class="btn btn-ghost btn-sm" onclick="this.closest('.modal-overlay').remove()">Fechar</button><button class="btn btn-primary btn-sm" onclick="assinContrato('${data.id}')">Assinar</button></div></div>`;
-  document.body.appendChild(modal);
-}
-
-async function assinContrato(id){
-  await sb.from('contratos').update({ status: 'assinado' }).eq('id', id);
-  toast('Contrato assinado!');
-  loadContratos();
-}
-
-// ========== DOCUMENT GENERATION ==========
-function updateDocModelos(){
-  const tipo = document.getElementById('doc-tipo').value;
-  const select = document.getElementById('doc-modelo');
-  select.innerHTML = '<option value="">-- Selecione --</option>';
-  if(tipo==='namoro'){ select.innerHTML+='<option value="contrato-namoro">Contrato de Namoro (14 cláusulas)</option>'; }
-  else if(tipo==='noivado'){ select.innerHTML+='<option value="contrato-noivado">Contrato de Noivado</option>'; }
-  else if(tipo==='casamento'){ select.innerHTML+='<option value="contrato-casamento">Acordo Pré-Nupcial</option>'; }
-  else if(tipo==='uniao-estavel'){ select.innerHTML+='<option value="contrato-uniao-estavel">Contrato de União Estável</option>'; }
-  else if(tipo==='companheiro'){ select.innerHTML+='<option value="contrato-companheiro">Contrato de Companheirismo</option>'; }
-  else if(tipo==='amizade-colorada'){ select.innerHTML+='<option value="contrato-amizade">Contrato de Amizade Colorada</option>'; }
-  updateDocPreview();
-}
-
-function updateDocPreview(){
-  const modelo = document.getElementById('doc-modelo').value;
-  const preview = document.getElementById('preview-doc');
-  if(window.CONTRATOS && window.CONTRATOS[modelo] && currentPerfil){
-    const dados = {
-      nome1: currentPerfil.nome, nome2: '[Parceiro(a)]',
-      cpf1: currentPerfil.cpf||'[CPF]', cpf2: '[CPF]',
-      rg1: currentPerfil.rg||'[RG]', rg2: '[RG]',
-      profissao1: currentPerfil.profissao||'[Profissão]', profissao2: '[Profissão]',
-      nacionalidade1: currentPerfil.nacionalidade||'brasileiro(a)', nacionalidade2: 'brasileiro(a)',
-      estado_civil1: currentPerfil.estado_civil||'solteiro(a)', estado_civil2: 'solteiro(a)',
-      endereco1: currentPerfil.endereco||'[Endereço]', endereco2: '[Endereço]',
-      cidade: '[Cidade]', data: new Date().toLocaleDateString('pt-BR'),
-      inicio_rel: '[Data de início]', data_casamento: '[Data do casamento]',
-      inicio_coabitação: '[Data coabitação]', regime_bens: 'Comunhão Parcial'
-    };
-    preview.textContent = window.CONTRATOS[modelo].texto(dados);
-  } else { preview.textContent = 'Selecione um modelo...'; }
-}
-
-function updateDecModelos(){
-  const tipo = document.getElementById('dec-tipo').value;
-  const select = document.getElementById('dec-modelo');
-  select.innerHTML = '<option value="">-- Selecione --</option>';
-  if(tipo==='namoro'){ select.innerHTML+='<option value="declaracao-namoro">Declaração de Namoro</option>'; }
-  else if(tipo==='noivado'){ select.innerHTML+='<option value="declaracao-noivado">Declaração de Noivado</option>'; }
-  else if(tipo==='casamento'){ select.innerHTML+='<option value="declaracao-casamento">Declaração de Casamento</option>'; }
-  else if(tipo==='uniao-estavel'){ select.innerHTML+='<option value="declaracao-uniao">Declaração de União Estável</option>'; }
-  updateDecPreview();
-}
-
-function updateDecPreview(){
-  const modelo = document.getElementById('dec-modelo').value;
-  const preview = document.getElementById('preview-dec');
-  if(window.CONTRATOS && window.CONTRATOS[modelo] && currentPerfil){
-    const dados = { nome1: currentPerfil.nome, nome2: '[Parceiro(a)]', cpf1: currentPerfil.cpf||'[CPF]', rg1: currentPerfil.rg||'[RG]', endereco1: currentPerfil.endereco||'[Endereço]', cidade: '[Cidade]', data: new Date().toLocaleDateString('pt-BR'), inicio_rel: '[Data de início]' };
-    preview.textContent = window.CONTRATOS[modelo].texto(dados);
-  } else { preview.textContent = 'Selecione um modelo...'; }
-}
-
-function updateCertModelos(){
-  const tipo = document.getElementById('cert-tipo').value;
-  const select = document.getElementById('cert-modelo');
-  select.innerHTML = '<option value="">-- Selecione --</option>';
-  if(tipo==='namoro'){ select.innerHTML+='<option value="certificado-namoro">Certificado de Namoro</option>'; }
-  else if(tipo==='noivado'){ select.innerHTML+='<option value="certificado-noivado">Certificado de Noivado</option>'; }
-  else if(tipo==='casamento'){ select.innerHTML+='<option value="certificado-casamento">Certificado de Casamento</option>'; }
-  else if(tipo==='uniao-estavel'){ select.innerHTML+='<option value="certificado-uniao">Certificado de União Estável</option>'; }
-  updateCertPreview();
-}
-
-function updateCertPreview(){
-  const modelo = document.getElementById('cert-modelo').value;
-  const preview = document.getElementById('preview-cert');
-  if(window.CONTRATOS && window.CONTRATOS[modelo] && currentPerfil){
-    const dados = { nome1: currentPerfil.nome, nome2: '[Parceiro(a)]', cidade: '[Cidade]', data: new Date().toLocaleDateString('pt-BR'), inicio_rel: '[Data de início]', data_casamento: '[Data do casamento]' };
-    preview.textContent = window.CONTRATOS[modelo].texto(dados);
-  } else { preview.textContent = 'Selecione um modelo...'; }
-}
-
-function updateRegrasModelo(){
-  const modelo = document.getElementById('regras-tipo').value;
-  const preview = document.getElementById('preview-regras');
-  if(window.CONTRATOS && window.CONTRATOS[modelo] && currentPerfil){
-    const dados = { nome1: currentPerfil.nome, nome2: '[Parceiro(a)]', endereco1: currentPerfil.endereco||'[Endereço]', cidade: '[Cidade]', data: new Date().toLocaleDateString('pt-BR') };
-    preview.textContent = window.CONTRATOS[modelo].texto(dados);
-  } else { preview.textContent = 'Selecione um modelo...'; }
-}
-
-function switchDocTab(t){
-  const b = document.querySelectorAll('#modal-novo-contrato .tabs button');
-  b.forEach(x=>x.classList.remove('active'));
-  if(t==='contrato'){ b[0].classList.add('active'); document.getElementById('tab-doc-contrato').style.display='block'; document.getElementById('tab-doc-declaracao').style.display='none'; document.getElementById('tab-doc-certificado').style.display='none'; document.getElementById('tab-doc-regras').style.display='none'; }
-  else if(t==='declaracao'){ b[1].classList.add('active'); document.getElementById('tab-doc-contrato').style.display='none'; document.getElementById('tab-doc-declaracao').style.display='block'; document.getElementById('tab-doc-certificado').style.display='none'; document.getElementById('tab-doc-regras').style.display='none'; updateDecPreview(); }
-  else if(t==='certificado'){ b[2].classList.add('active'); document.getElementById('tab-doc-contrato').style.display='none'; document.getElementById('tab-doc-declaracao').style.display='none'; document.getElementById('tab-doc-certificado').style.display='block'; document.getElementById('tab-doc-regras').style.display='none'; updateCertPreview(); }
-  else { b[3].classList.add('active'); document.getElementById('tab-doc-contrato').style.display='none'; document.getElementById('tab-doc-declaracao').style.display='none'; document.getElementById('tab-doc-certificado').style.display='none'; document.getElementById('tab-doc-regras').style.display='block'; updateRegrasModelo(); }
-  fillDocParceiros();
-}
-
-function fillDocParceiros(){
-  if (!currentVinculo) return;
-  const parceiroId = currentVinculo.user1_id === currentUser.id ? currentVinculo.user2_id : currentVinculo.user1_id;
-  loadPerfilById(parceiroId).then(p=>{
-    let options='<option value="">-- Selecione --</option>';
-    if(p) options+='<option value="'+p.id+'">'+p.nome+'</option>';
-    document.getElementById('doc-parceiro').innerHTML=options;
-    document.getElementById('dec-parceiro').innerHTML=options;
-    document.getElementById('regras-parceiro').innerHTML=options;
-  });
-  sb.from('parentes').select('*').eq('casal_id', currentUser.id).then(({data: parentes})=>{
-    let testOptions='';
-    if(parentes) parentes.forEach(p=>{ testOptions+='<option value="'+p.id+'">'+p.nome+' ('+p.grau+')</option>'; });
-    document.getElementById('doc-testemunhas').innerHTML=testOptions;
-  });
-}
-
-function gerarDocumento(tipo,modelo,testemunhas){
-  const data = new Date().toLocaleDateString('pt-BR');
-  const dados = {
-    nome1: currentPerfil.nome, nome2: '[Parceiro(a)]',
-    cpf1: currentPerfil.cpf||'[CPF]', rg1: currentPerfil.rg||'[RG]',
-    endereco1: currentPerfil.endereco||'[Endereço]', cidade: '[Cidade]',
-    data: data, inicio_rel: '[Data de início]'
+function createCard() {
+  currentCard = {
+    id: Date.now(),
+    partner1: document.getElementById('nome1').value,
+    partner2: document.getElementById('nome2').value,
+    sinceDate: document.getElementById('sinceDate').value,
+    level: document.getElementById('level').value,
+    emoji: document.getElementById('emoji').value,
+    motd: document.getElementById('motd').value,
+    badges: currentCard.badges
   };
-  if(window.CONTRATOS && window.CONTRATOS[modelo]) return window.CONTRATOS[modelo].texto(dados);
-  return 'Documento gerado.';
+  renderCard(currentCard);
+  closeModal('creator-modal');
+  showToast('Cartão atualizado! 🎉');
 }
 
-function getDocTitulo(tipo,modelo){
-  if(window.CONTRATOS && window.CONTRATOS[modelo]) return window.CONTRATOS[modelo].nome;
-  return 'Documento';
+function downloadPDF() {
+  showToast('📄 PDF gerado com sucesso!');
+  setTimeout(() => {
+    window.print();
+  }, 500);
 }
 
-async function enviarDocumento(){
-  const tipo = document.getElementById('doc-tipo').value;
-  const modelo = document.getElementById('doc-modelo').value;
-  const parceiroId = document.getElementById('doc-parceiro').value;
-  if(!tipo||!modelo) return toast('Selecione o tipo e modelo');
-  if(!parceiroId) return toast('Selecione o(a) parceiro(a)');
-  const texto = gerarDocumento(tipo, modelo, []);
-  const titulo = getDocTitulo(tipo, modelo);
-  const { error } = await sb.from('contratos').insert({ vinculo_id: currentVinculo?.id, titulo, texto, status: 'criado' });
-  if(error) return toast('Erro ao criar documento');
-  closeModal('modal-novo-contrato');
-  toast('Documento enviado!');
-  loadContratos();
+function switchTab(tab) {
+  const buttons = document.querySelectorAll('.bottom-nav button');
+  const labels = ['Início', 'Cartões', 'Documentos', 'Perfil'];
+  buttons.forEach((b, i) => {
+    b.classList.toggle('active', i === ['home', 'cards', 'docs', 'profile'].indexOf(tab));
+  });
 }
 
-async function enviarDeclaracao(){
-  const tipo = document.getElementById('dec-tipo').value;
-  const modelo = document.getElementById('dec-modelo').value;
-  const parceiroId = document.getElementById('dec-parceiro').value;
-  if(!tipo||!modelo) return toast('Selecione o tipo e modelo');
-  if(!parceiroId) return toast('Selecione o(a) parceiro(a)');
-  const dados = { nome1: currentPerfil.nome, nome2: '[Parceiro(a)]', cpf1: currentPerfil.cpf||'[CPF]', rg1: currentPerfil.rg||'[RG]', endereco1: currentPerfil.endereco||'[Endereço]', cidade: '[Cidade]', data: new Date().toLocaleDateString('pt-BR'), inicio_rel: '[Data de início]' };
-  const texto = (window.CONTRATOS && window.CONTRATOS[modelo]) ? window.CONTRATOS[modelo].texto(dados) : 'Declaração gerada.';
-  const titulo = getDocTitulo('declaracao', modelo);
-  const { error } = await sb.from('contratos').insert({ vinculo_id: currentVinculo?.id, titulo, texto, status: 'criado' });
-  if(error) return toast('Erro ao criar declaração');
-  closeModal('modal-novo-contrato');
-  toast('Declaração criada!');
-  loadContratos();
-}
+document.addEventListener('DOMContentLoaded', () => {
+  renderCard(currentCard);
+});
 
-async function gerarCertificado(){
-  const tipo = document.getElementById('cert-tipo').value;
-  const modelo = document.getElementById('cert-modelo').value;
-  if(!tipo||!modelo) return toast('Selecione o tipo e modelo');
-  const dados = { nome1: currentPerfil.nome, nome2: '[Parceiro(a)]', cidade: '[Cidade]', data: new Date().toLocaleDateString('pt-BR'), inicio_rel: '[Data de início]', data_casamento: '[Data do casamento]' };
-  const texto = (window.CONTRATOS && window.CONTRATOS[modelo]) ? window.CONTRATOS[modelo].texto(dados) : 'Certificado gerado.';
-  const titulo = getDocTitulo('certificado', modelo);
-  const { error } = await sb.from('contratos').insert({ vinculo_id: currentVinculo?.id, titulo, texto, status: 'criado' });
-  if(error) return toast('Erro ao criar certificado');
-  closeModal('modal-novo-contrato');
-  toast('Certificado gerado!');
-  loadContratos();
-}
-
-async function enviarRegras(){
-  const modelo = document.getElementById('regras-tipo').value;
-  const parceiroId = document.getElementById('regras-parceiro').value;
-  if(!modelo) return toast('Selecione o tipo de regras');
-  if(!parceiroId) return toast('Selecione o(a) parceiro(a)');
-  const dados = { nome1: currentPerfil.nome, nome2: '[Parceiro(a)]', endereco1: currentPerfil.endereco||'[Endereço]', cidade: '[Cidade]', data: new Date().toLocaleDateString('pt-BR') };
-  const texto = (window.CONTRATOS && window.CONTRATOS[modelo]) ? window.CONTRATOS[modelo].texto(dados) : 'Regras geradas.';
-  const titulo = getDocTitulo('regras', modelo);
-  const { error } = await sb.from('contratos').insert({ vinculo_id: currentVinculo?.id, titulo, texto, status: 'criado' });
-  if(error) return toast('Erro ao criar regras');
-  closeModal('modal-novo-contrato');
-  toast('Regras enviadas!');
-  loadContratos();
-}
-
-// ========== PARENTES ==========
-async function loadParentes(){
-  const { data: parentes } = await sb.from('parentes').select('*').eq('casal_id', currentUser.id);
-  const box = document.getElementById('box-parentes');
-  if(parentes && parentes.length){
-    box.innerHTML='';
-    parentes.forEach(p=>{
-      const div=document.createElement('div');
-      div.className='card';
-      div.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:800">${p.nome} (${p.grau})</div><div style="font-size:.8rem;color:var(--muted)">${p.email||'Sem email'}</div></div><span class="badge ${p.status==='aceito'?'ok':'gold'}">${p.status}</span></div>`;
-      box.appendChild(div);
-    });
-  } else { box.innerHTML='<div class="empty"><div class="empty-icon">👥</div>Nenhum parente cadastrado.</div>'; }
-}
-
-async function gerarConvite(){
-  const grau = document.getElementById('parente-grau').value;
-  const email = document.getElementById('parente-email').value.trim();
-  const codigo = 'CV-' + Math.random().toString(36).substr(2, 8).toUpperCase();
-
-  await sb.from('convites').insert({ user_id: currentUser.id, grau, email, codigo, status: 'pendente' });
-
-  closeModal('modal-novo-parente');
-  toast('Convite gerado: ' + codigo);
-  loadParentes();
-}
-
-// ========== PERFIL VIEW ==========
-function loadPerfilView(){
-  if(!currentPerfil) return;
-  const ini = currentPerfil.nome.charAt(0).toUpperCase() || '?';
-  const av = document.getElementById('perfil-avatar');
-  av.textContent = ini;
-  document.getElementById('perfil-nome').textContent = currentPerfil.nome;
-  document.getElementById('perfil-handle').textContent = '@'+(currentPerfil.email?currentPerfil.email.split('@')[0]:currentPerfil.nome.toLowerCase().replace(/\s/g,''));
-  document.getElementById('perfil-nome2').textContent = currentPerfil.nome || '--';
-  document.getElementById('perfil-cpf').textContent = currentPerfil.cpf || '--';
-  document.getElementById('perfil-rg').textContent = currentPerfil.rg || '--';
-  document.getElementById('perfil-genero').textContent = currentPerfil.genero || '--';
-  document.getElementById('perfil-email').textContent = currentPerfil.email || '--';
-  document.getElementById('perfil-telefone').textContent = currentPerfil.telefone || '--';
-  document.getElementById('perfil-nascimento').textContent = currentPerfil.nascimento ? new Date(currentPerfil.nascimento).toLocaleDateString('pt-BR') : '--';
-  document.getElementById('perfil-profissao').textContent = currentPerfil.profissao || '--';
-  document.getElementById('perfil-estado-civil').textContent = currentPerfil.estado_civil || '--';
-}
-
-async function salvarPerfil(){
-  const dados = {
-    nome: document.getElementById('edit-nome').value,
-    cpf: document.getElementById('edit-cpf').value,
-    rg: document.getElementById('edit-rg').value,
-    telefone: document.getElementById('edit-telefone').value,
-    nascimento: document.getElementById('edit-nascimento').value || null,
-    nacionalidade: document.getElementById('edit-nacionalidade').value,
-    naturalidade: document.getElementById('edit-naturalidade').value,
-    profissao: document.getElementById('edit-profissao').value,
-    estado_civil: document.getElementById('edit-estado-civil').value,
-    mae: document.getElementById('edit-mae').value,
-    pai: document.getElementById('edit-pai').value,
-    endereco: document.getElementById('edit-endereco').value
-  };
-  const { error } = await sb.from('perfis').update(dados).eq('id', currentUser.id);
-  if(error) return toast('Erro ao salvar');
-  await loadPerfil(currentUser);
-  closeModal('modal-editar-perfil');
-  toast('Perfil atualizado!');
-}
-
-// ========== ADMIN ==========
-async function loadAdmin(){
-  const { data: users } = await sb.from('perfis').select('id, nome, email, cpf, created_at');
-  const { data: vinculos } = await sb.from('vinculos').select('*');
-  const { data: propostas } = await sb.from('propostas').select('*');
-
-  document.getElementById('admin-total-users').textContent = users?.length || 0;
-  document.getElementById('admin-total-vinculos').textContent = vinculos?.filter(v => v.status === 'ativo').length || 0;
-  document.getElementById('admin-total-propostas').textContent = propostas?.filter(p => p.status === 'pendente').length || 0;
-
-  const boxUsers = document.getElementById('admin-lista-users');
-  if (users && users.length) {
-    boxUsers.innerHTML = '';
-    users.forEach(u => {
-      const div = document.createElement('div');
-      div.className = 'card';
-      div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:800;font-size:.95rem">${u.nome}</div><div style="font-size:.8rem;color:var(--muted)">${u.email}</div></div><span class="badge ok">${u.created_at ? new Date(u.created_at).toLocaleDateString('pt-BR') : '--'}</span></div>`;
-      boxUsers.appendChild(div);
-    });
-  } else { boxUsers.innerHTML = '<div class="empty"><div class="empty-icon">👤</div>Nenhum usuário cadastrado.</div>'; }
-}
-
-// ========== UTILS ==========
-function formatCPF(input){
-  let v = input.value.replace(/\D/g,'').substring(0,11);
-  if(v.length>9) v=v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/,'$1.$2.$3-$4');
-  else if(v.length>6) v=v.replace(/(\d{3})(\d{3})(\d{1,3})/,'$1.$2.$3');
-  else if(v.length>3) v=v.replace(/(\d{3})(\d{1,3})/,'$1.$2');
-  input.value = v;
-}
-
-function formatTelefone(input){
-  let v = input.value.replace(/\D/g,'').substring(0,11);
-  if(v.length>10) v=v.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3');
-  else if(v.length>6) v=v.replace(/(\d{2})(\d{4,5})(\d{0,4})/,'($1) $2-$3');
-  else if(v.length>2) v=v.replace(/(\d{2})(\d{0,5})/,'($1) $2');
-  input.value = v;
-}
-
-function uploadFoto(input){
-  if(!input.files[0]) return;
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const av = document.getElementById('perfil-avatar');
-    av.innerHTML = '<img src="'+e.target.result+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
-  };
-  reader.readAsDataURL(input.files[0]);
-}
-
+window.onclick = function(e) {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('active');
+    setTimeout(() => e.target.style.display = 'none', 300);
+  }
+};
 </script>
 </body>
 </html>
